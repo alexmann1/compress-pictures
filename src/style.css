@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for theme transitions */
+:root {
+  --transition-duration: 0.3s;
+}
+
+body {
+  @apply min-h-screen transition-colors duration-300;
+}
+
+#app {
+  @apply max-w-screen-xl mx-auto p-4 md:p-6;
+}
+
+/* Theme-specific variables */
+.dark {
+  @apply bg-gray-900 text-white;
+}
+
+.light {
+  @apply bg-gray-50 text-gray-900;
+}

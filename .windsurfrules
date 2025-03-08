@@ -1,0 +1,30 @@
+## Project Context
+One pager web app to optimize images
+
+## Tech Stack
+- Vue 3
+- Vite
+- TailwindCSS
+
+## Code Style and Structure
+- Use Vue Composition API
+- Use Vite
+- Prefer iteration and modularization over code duplication
+- Always use font-awesome for icons (ex: <i class="fas fa-arrow-left mr-2"></i>)
+- Use TailwindCSS for styling
+
+## File Structure
+- public
+- src
+  - assets
+  - components
+  - pages
+  - utils
+  - services
+  - App.vue
+  - main.js
+  - router.js
+
+## Testing
+- Use Vitest
+
