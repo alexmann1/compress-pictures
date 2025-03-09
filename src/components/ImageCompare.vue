@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed, nextTick } from 'vue';
 
 const props = defineProps({
   originalSrc: {
@@ -13,6 +13,14 @@ const props = defineProps({
   isProcessing: {
     type: Boolean,
     default: false
+  },
+  aspectRatio: {
+    type: String,
+    default: '1:1'
+  },
+  showComparison: {
+    type: Boolean,
+    default: true
   }
 });
 
@@ -102,14 +110,46 @@ const handleTouchStart = (e) => {
   document.addEventListener('touchend', handleTouchEnd);
 };
 
-// Reset slider position when images change
-watch(() => [props.originalSrc, props.optimizedSrc], () => {
-  updateSliderPosition(50);
+// Watch for changes in aspect ratio or comparison mode
+watch(
+  () => [props.aspectRatio, props.showComparison], 
+  () => {
+    // Force re-render when these props change
+    if (!props.showComparison) {
+      // In format mode, make sure the aspect ratio is applied
+      nextTick(() => {
+        // Ensure the component updates with the new aspect ratio
+        console.log('Format mode:', props.aspectRatio);
+      });
+    } else {
+      // In comparison mode, reset the slider
+      nextTick(() => {
+        updateSliderPosition(50);
+      });
+    }
+  }
+);
+
+// Reset slider position when images change or when switching modes
+watch(() => [props.originalSrc, props.optimizedSrc, props.showComparison], () => {
+  if (props.showComparison) {
+    updateSliderPosition(50);
+  }
 });
 
+// Set initial slider position on mounted and when switching modes
 onMounted(() => {
-  // Set initial position
-  updateSliderPosition(50);
+  if (props.showComparison) {
+    updateSliderPosition(50);
+  }
+});
+
+// Watch for changes in showComparison to update UI accordingly
+watch(() => props.showComparison, (newVal) => {
+  // When switching back to comparison mode, ensure slider is visible
+  if (newVal === true) {
+    updateSliderPosition(50);
+  }
 });
 </script>
 
@@ -117,7 +157,7 @@ onMounted(() => {
   <div 
     ref="container" 
     class="relative w-full h-full overflow-hidden rounded-lg bg-slate-200 dark:bg-gray-700"
-    style="min-height: 650px; max-width: 100%;"
+    :class="{ 'min-h-[650px]': showComparison }"
   >
     <!-- Loading indicator -->
     <div 
@@ -127,44 +167,84 @@ onMounted(() => {
       <i class="fas fa-spinner fa-spin text-3xl"></i>
     </div>
     
-    <!-- Original image (background) -->
-    <div class="absolute inset-0 bg-contain bg-center bg-no-repeat" :style="{ backgroundImage: `url(${originalSrc})` }"></div>
-    
-    <!-- Optimized image (foreground with clip) -->
-    <div 
-      ref="optimizedImageEl"
-      class="absolute inset-0 bg-contain bg-center bg-no-repeat optimized-image" 
-      :style="{ 
-        backgroundImage: `url(${optimizedSrc})`,
-        clipPath: 'inset(0 0 0 50%)',
-        backgroundSize: 'contain'
-      }"
-    ></div>
-    
-    <!-- Divider line -->
-    <div 
-      ref="divider" 
-      class="absolute top-0 bottom-0 w-0.5 bg-white cursor-ew-resize z-10 shadow-lg"
-      style="left: 50%;"
-      @mousedown="handleMouseDown"
-      @touchstart="handleTouchStart"
-    >
-      <!-- Divider handle -->
-      <div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white shadow-lg flex items-center justify-center">
-        <i class="fas fa-arrows-alt-h text-blue-600"></i>
+    <!-- Comparison Mode -->
+    <div v-if="showComparison" class="relative w-full h-full flex items-center justify-center">
+      <!-- Original image (background) -->
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div 
+          class="relative overflow-hidden bg-contain bg-center bg-no-repeat" 
+          :style="{ 
+            backgroundImage: `url(${originalSrc})`,
+            width: '100%',
+            height: '100%',
+            maxHeight: '100%',
+            maxWidth: '100%',
+            objectFit: 'contain'
+          }"
+        >
+          <!-- Optimized image (foreground with clip) -->
+          <div 
+            ref="optimizedImageEl"
+            class="absolute inset-0 bg-contain bg-center bg-no-repeat optimized-image" 
+            :style="{ 
+              backgroundImage: `url(${optimizedSrc})`,
+              clipPath: 'inset(0 0 0 50%)',
+              backgroundSize: 'contain'
+            }"
+          ></div>
+        </div>
       </div>
       
-      <!-- Labels moved to sides of container -->
+      <!-- Divider line -->
+      <div 
+        ref="divider" 
+        class="absolute top-0 bottom-0 w-0.5 bg-white cursor-ew-resize z-10 shadow-lg"
+        style="left: 50%;"
+        @mousedown="handleMouseDown"
+        @touchstart="handleTouchStart"
+      >
+        <!-- Divider handle -->
+        <div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white shadow-lg flex items-center justify-center">
+          <i class="fas fa-arrows-alt-h text-blue-600"></i>
+        </div>
+      </div>
+      
+      <!-- Original label (left side) -->
+      <div class="absolute top-4 left-4 bg-black/70 text-white text-sm px-3 py-1.5 rounded-lg whitespace-nowrap font-medium">
+        Original
+      </div>
+      
+      <!-- Optimized label (right side) -->
+      <div class="absolute top-4 right-4 bg-black/70 text-white text-sm px-3 py-1.5 rounded-lg whitespace-nowrap font-medium">
+        Optimized
+      </div>
+      
+      <!-- Aspect ratio indicator -->
+      <div class="absolute bottom-4 left-4 bg-black/70 text-white text-xs px-2 py-1 rounded-md whitespace-nowrap">
+        {{ aspectRatio }}
+      </div>
     </div>
     
-    <!-- Original label (left side) -->
-    <div class="absolute top-4 left-4 bg-black/70 text-white text-sm px-3 py-1.5 rounded-lg whitespace-nowrap font-medium">
-      Original
-    </div>
-    
-    <!-- Optimized label (right side) -->
-    <div class="absolute top-4 right-4 bg-black/70 text-white text-sm px-3 py-1.5 rounded-lg whitespace-nowrap font-medium">
-      Optimized
+    <!-- Format Mode (Single Image) -->
+    <div v-else class="relative w-full h-full flex items-center justify-center">
+      <!-- Single image with aspect ratio applied -->
+      <img 
+        :src="originalSrc"
+        class="max-h-full max-w-full" 
+        :style="{ 
+          aspectRatio: aspectRatio ? aspectRatio.replace(':', '/') : 'auto',
+        }"
+      />
+      
+      <!-- Format label -->
+      <div class="absolute top-4 right-4 bg-black/70 text-white text-sm px-3 py-1.5 rounded-lg whitespace-nowrap font-medium">
+        Format: {{ aspectRatio }}
+      </div>
+      
+      <!-- Aspect ratio indicator -->
+      <div class="absolute bottom-4 left-4 bg-black/70 text-white text-xs px-2 py-1 rounded-md whitespace-nowrap">
+        {{ aspectRatio }}
+      </div>
     </div>
   </div>
 </template>
