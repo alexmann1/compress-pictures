@@ -10,6 +10,10 @@ const props = defineProps({
     type: String,
     required: true
   },
+  sliderPosition: {
+    type: Number,
+    default: 50
+  },
   isProcessing: {
     type: Boolean,
     default: false
@@ -133,14 +137,21 @@ watch(
 // Reset slider position when images change or when switching modes
 watch(() => [props.originalSrc, props.optimizedSrc, props.showComparison], () => {
   if (props.showComparison) {
-    updateSliderPosition(50);
+    updateSliderPosition(props.sliderPosition);
+  }
+});
+
+// Watch for changes in sliderPosition from parent
+watch(() => props.sliderPosition, (newValue) => {
+  if (props.showComparison) {
+    updateSliderPosition(newValue);
   }
 });
 
 // Set initial slider position on mounted and when switching modes
 onMounted(() => {
   if (props.showComparison) {
-    updateSliderPosition(50);
+    updateSliderPosition(props.sliderPosition);
   }
 });
 
@@ -148,7 +159,7 @@ onMounted(() => {
 watch(() => props.showComparison, (newVal) => {
   // When switching back to comparison mode, ensure slider is visible
   if (newVal === true) {
-    updateSliderPosition(50);
+    updateSliderPosition(props.sliderPosition);
   }
 });
 </script>

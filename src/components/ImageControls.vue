@@ -22,6 +22,14 @@ const props = defineProps({
   activeTab: {
     type: String,
     default: 'resize'
+  },
+  formatState: {
+    type: Object,
+    default: () => ({
+      platform: 'instagram',
+      ratio: '1:1',
+      position: { x: 0, y: 0 }
+    })
   }
 });
 
@@ -94,14 +102,28 @@ const formatOptions = [
   }
 ];
 
-// Format options
-const selectedFormat = ref('instagram');
-const aspectRatio = ref(formatOptions[0].ratios[0].ratio);
+// Format options - use refs derived from formatState
+const selectedFormat = ref(props.formatState?.platform || 'instagram');
+const aspectRatio = ref(props.formatState?.ratio || formatOptions[0].ratios[0].ratio);
 
-// Watch for format changes
+// Watch for external changes to formatState
+watch(() => props.formatState, (newState) => {
+  if (newState) {
+    selectedFormat.value = newState.platform;
+    aspectRatio.value = newState.ratio;
+  }
+}, { deep: true });
+
+// Watch for format changes initiated in this component
 watch([selectedFormat], () => {
-  // When platform changes, select first ratio of that platform
-  aspectRatio.value = formatOptions.find(opt => opt.id === selectedFormat.value).ratios[0].ratio;
+  // When platform changes, select first ratio of that platform if current ratio isn't available
+  const platform = formatOptions.find(opt => opt.id === selectedFormat.value);
+  const availableRatios = platform.ratios.map(r => r.ratio);
+  
+  if (!availableRatios.includes(aspectRatio.value)) {
+    aspectRatio.value = availableRatios[0];
+  }
+  
   emit('format', { platform: selectedFormat.value, ratio: aspectRatio.value });
 });
 
@@ -112,8 +134,8 @@ watch([aspectRatio], () => {
 
 // Switch tabs
 const switchTab = (tab) => {
-  activeTab.value = tab;
   // Forward the tab change event to the parent component
+  // The parent will update the activeTab prop
   emit('tab-change', tab);
 };
 
@@ -142,6 +164,8 @@ const handleDownload = async () => {
     // Use different image source based on active tab
     let imageUrl;
     
+    console.log(props.cropImage)
+
     if (activeTab.value === 'format' && props.cropImage) {
       // Use the cropImageToFormat function to get properly cropped image
       imageUrl = await props.cropImage();
