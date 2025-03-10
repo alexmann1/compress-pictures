@@ -164,8 +164,6 @@ const handleDownload = async () => {
     // Use different image source based on active tab
     let imageUrl;
     
-    console.log(props.cropImage)
-
     if (activeTab.value === 'format' && props.cropImage) {
       // Use the cropImageToFormat function to get properly cropped image
       imageUrl = await props.cropImage();
@@ -186,35 +184,6 @@ const handleDownload = async () => {
   }
 };
 
-// Calculate aspect ratio style to properly display ratio boxes
-const getAspectRatioStyle = (ratio) => {
-  const [width, height] = ratio.split(':').map(Number);
-  const maxHeight = 70; // Maximum height in pixels
-  const maxWidth = 70;  // Maximum width in pixels
-  
-  let actualWidth, actualHeight;
-  
-  if (width > height) {
-    // Landscape orientation (e.g., 16:9)
-    actualWidth = maxWidth;
-    actualHeight = (height / width) * maxWidth;
-  } else if (width < height) {
-    // Portrait orientation (e.g., 9:16, 4:5)
-    actualHeight = maxHeight;
-    actualWidth = (width / height) * maxHeight;
-  } else {
-    // Square (1:1)
-    actualWidth = maxWidth;
-    actualHeight = maxHeight;
-  }
-  
-  return {
-    width: `${actualWidth}px`,
-    height: `${actualHeight}px`,
-    top: `${(80 - actualHeight) / 2}px` // Center vertically in the container
-  };
-};
-
 // Watch compression changes and emit optimize event with inverted quality value
 watch(compression, (newCompression) => {
   // Convert compression to quality (100 - compression)
@@ -223,13 +192,6 @@ watch(compression, (newCompression) => {
   emit('optimize', quality);
 }, { immediate: true });
 
-// Handle reset button click
-const handleReset = () => {
-  compression.value = 65; // Reset to default compression (65%)
-  emit('reset');
-  // Also trigger optimization with the reset value
-  emit('optimize', 100 - compression.value);
-};
 </script>
 
 <template>

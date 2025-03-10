@@ -1,7 +1,6 @@
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import ImageUploader from './components/ImageUploader.vue'
-import ImageCompare from './components/ImageCompare.vue'
 import ImageControls from './components/ImageControls.vue'
 import ImageResizeMode from './components/ImageResizeMode.vue'
 import ImageFormatMode from './components/ImageFormatMode.vue'
@@ -17,6 +16,9 @@ const isProcessing = ref(false)
 
 // Active feature tab - must be defined before using it in watchers
 const activeFeature = ref('resize')
+
+// For cropping images during format download
+const cropImageFunction = ref(null)
 
 // Format state
 const formatState = ref({
@@ -169,8 +171,6 @@ const processImage = async (qualityValue = 80) => {
   }
 }
 
-// No need to watch quality as it's now handled in the ImageControls component
-
 // Handle optimization from controls component
 const handleOptimize = (qualityValue) => {
   if (!originalImage.value || isProcessing.value) return;
@@ -192,10 +192,6 @@ const handleFormat = (formatData) => {
   // Important: Create a new object reference to trigger reactivity
   formatState.value = { ...newFormatState };
 };
-
-// Image repositioning functionality has been moved to ImageFormatMode component
-
-// Helper functions for calculating image dimensions have been moved to ImageFormatMode component
 
 // Slider position for resize mode
 const sliderPosition = ref(50);
@@ -252,10 +248,6 @@ const toggleTheme = () => {
   isDarkMode.value = !isDarkMode.value
   document.documentElement.classList.toggle('dark', isDarkMode.value)
 }
-
-// Size calculation functions have been moved to the ImageResizeMode component
-
-// Crop functionality has been moved to the ImageFormatMode component
 </script>
 
 <template>
@@ -304,6 +296,7 @@ const toggleTheme = () => {
                   :original-image="originalImage"
                   :format-state="formatState"
                   @format-change="handleFormat"
+                  @crop-image-ready="cropFunc => cropImageFunction = cropFunc"
                 />
               </template>
 
@@ -335,6 +328,7 @@ const toggleTheme = () => {
                 :is-processing="isProcessing"
                 :active-tab="activeFeature"
                 :format-state="formatState"
+                :crop-image="cropImageFunction"
                 @reset="handleReset"
                 @optimize="handleOptimize"
                 @format="handleFormat"

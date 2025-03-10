@@ -50,7 +50,7 @@ const props = defineProps({
   formatState: Object
 });
 
-const emit = defineEmits(['format-change']);
+const emit = defineEmits(['format-change', 'crop-image-ready']);
 
 // Image references and state
 const imageRef = ref(null);
@@ -129,6 +129,14 @@ onMounted(() => {
     localState.position.x = props.formatState.position.x || 0;
     localState.position.y = props.formatState.position.y || 0;
   }
+  
+  // Create a wrapper function that preserves access to all reactive variables
+  const boundCropImageFunction = () => {
+    return cropImageToFormat();
+  };
+  
+  // Expose the crop function to parent component
+  emit('crop-image-ready', boundCropImageFunction);
 });
 
 // Handle successful image load
@@ -146,34 +154,6 @@ const updateImageDimensions = (event) => {
     imgWidth.value = imageRef.value.naturalWidth;
     imgHeight.value = imageRef.value.naturalHeight;
   }
-};
-
-// Handle image load error
-const onImageError = () => {
-  imageLoaded.value = false;
-};
-
-// Platform selection handler
-const selectPlatform = (platformId) => {
-  localState.platform = platformId;
-  
-  // If current ratio isn't available in the new platform, select the first available
-  const availableRatios = formatOptions[platformId].map(r => r.id);
-  if (!availableRatios.includes(localState.ratio)) {
-    localState.ratio = availableRatios[0];
-  }
-  
-  // Emit change event
-  emitFormatChange();
-};
-
-// Ratio selection handler
-const selectRatio = (ratioId) => {
-  console.log('ImageFormatMode - Ratio selected:', ratioId);
-  console.log('ImageFormatMode - Current ratio before change:', localState.ratio);
-  localState.ratio = ratioId;
-  console.log('ImageFormatMode - Current ratio after change:', localState.ratio);
-  emitFormatChange();
 };
 
 // Image dragging handlers
@@ -279,6 +259,132 @@ const emitFormatChange = () => {
       x: position.value.x,
       y: position.value.y
     }
+  });
+};
+
+// Crop image based on selected aspect ratio and current position
+const cropImageToFormat = async () => {
+  // Use props.originalImage directly to avoid context issues when called from other components
+  if (!props.originalImage || !props.formatState || !props.formatState.ratio) {
+    // If no image/ratio, return the original image
+    return props.originalImage ? props.originalImage.url : null;
+  }
+   
+  return new Promise((resolve) => {
+    // Direct cropping approach that doesn't rely on DOM elements
+    // This allows the function to work when called from other components
+    
+    // Create a new image to work with
+    const img = new Image();
+    img.crossOrigin = 'Anonymous';
+    
+    img.onload = () => {
+      try {
+        // Create a canvas with the correct aspect ratio
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Parse aspect ratio
+        const [targetWidth, targetHeight] = props.formatState.ratio.split(':').map(Number);
+        const targetRatio = targetWidth / targetHeight;
+                
+        // Set output dimensions (use standard social media size)
+        let outputWidth, outputHeight;
+        
+        // Handle different aspect ratios with appropriate resolutions
+        if (props.formatState.ratio === '1:1') { // Square
+          outputWidth = outputHeight = 1080;
+        } else if (props.formatState.ratio === '9:16') { // Portrait/Story
+          outputWidth = 1080;
+          outputHeight = 1920;
+        } else if (props.formatState.ratio === '16:9') { // Landscape
+          outputWidth = 1920;
+          outputHeight = 1080;
+        } else if (props.formatState.ratio === '4:5') { // Instagram portrait
+          outputWidth = 1080;
+          outputHeight = 1350;
+        } else if (props.formatState.ratio === '2:3') { // Pinterest
+          outputWidth = 1000;
+          outputHeight = 1500;
+        } else {
+          // Default calculation for other ratios
+          outputWidth = 1080; 
+          outputHeight = Math.round(outputWidth / targetRatio);
+        }
+        
+        // Set canvas size to match the desired aspect ratio
+        canvas.width = outputWidth;
+        canvas.height = outputHeight;
+               
+        // Use the original image dimensions directly instead of DOM elements
+        // This allows the function to work when called from other components
+        
+        // Get the original image aspect ratio
+        const originalRatio = props.originalImage.width / props.originalImage.height;
+        
+        // Calculate the scale factor to map position coordinates to original image
+        // Since position is already in original image coordinates, scale is 1:1
+        const scaleX = 1;
+        const scaleY = 1;
+        
+        // Calculate the crop dimensions based on the target aspect ratio
+        let cropWidth, cropHeight;
+        
+        // Determine crop dimensions based on original image and target ratio
+        if (targetRatio > originalRatio) {
+          // Target is wider than original - constrained by width
+          cropWidth = img.width;
+          cropHeight = cropWidth / targetRatio;
+        } else {
+          // Target is taller than original - constrained by height
+          cropHeight = img.height;
+          cropWidth = cropHeight * targetRatio;
+        }
+        
+        // Calculate the maximum possible crop dimensions that fit within the image
+        if (cropWidth > img.width) {
+          cropWidth = img.width;
+          cropHeight = cropWidth / targetRatio;
+        }
+        if (cropHeight > img.height) {
+          cropHeight = img.height;
+          cropWidth = cropHeight * targetRatio;
+        }
+        
+        // Apply user's drag position (scaled from UI to original image coordinates)
+        // Ensure position stays within image bounds
+        const positionX = props.formatState.position.x * scaleX;
+        const positionY = props.formatState.position.y * scaleY;
+        
+        // Calculate the source rectangle coordinates
+        let sourceX = (img.width - cropWidth) / 2 - positionX;
+        let sourceY = (img.height - cropHeight) / 2 - positionY;
+        
+        // Ensure the crop stays within the image boundaries
+        sourceX = Math.max(0, Math.min(sourceX, img.width - cropWidth));
+        sourceY = Math.max(0, Math.min(sourceY, img.height - cropHeight));
+                
+        // Fill the canvas with black background
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw the cropped portion to the canvas with the proper dimensions
+        ctx.drawImage(
+          img,
+          sourceX, sourceY, cropWidth, cropHeight,
+          0, 0, canvas.width, canvas.height
+        );
+        
+        // Return the cropped image as data URL with good quality
+        resolve(canvas.toDataURL('image/jpeg', 0.92));
+      } catch (error) {
+        console.error('Error cropping image:', error);
+        resolve(props.originalImage.url); // Fallback to original image
+      }
+    };
+    
+    // Use the original image for the crop
+    img.src = props.originalImage.url;
   });
 };
 
