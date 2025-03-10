@@ -131,8 +131,9 @@ onMounted(() => {
   }
   
   // Create a wrapper function that preserves access to all reactive variables
-  const boundCropImageFunction = () => {
-    return cropImageToFormat();
+  // Now accepts quality parameter to apply resize settings
+  const boundCropImageFunction = (quality = 80) => {
+    return cropImageToFormat(quality);
   };
   
   // Expose the crop function to parent component
@@ -263,7 +264,8 @@ const emitFormatChange = () => {
 };
 
 // Crop image based on selected aspect ratio and current position
-const cropImageToFormat = async () => {
+// Now also accepts quality parameter to apply resize during formatting
+const cropImageToFormat = async (quality = 80) => {
   // Use props.originalImage directly to avoid context issues when called from other components
   if (!props.originalImage || !props.formatState || !props.formatState.ratio) {
     // If no image/ratio, return the original image
@@ -375,8 +377,12 @@ const cropImageToFormat = async () => {
           0, 0, canvas.width, canvas.height
         );
         
-        // Return the cropped image as data URL with good quality
-        resolve(canvas.toDataURL('image/jpeg', 0.92));
+        // Apply quality parameter when generating the final image
+        // Convert quality (0-100) to a canvas-compatible value (0-1)
+        const qualityValue = Math.max(0.1, Math.min(1, quality / 100));
+        
+        // Return the cropped image with the specified quality
+        resolve(canvas.toDataURL('image/jpeg', qualityValue));
       } catch (error) {
         console.error('Error cropping image:', error);
         resolve(props.originalImage.url); // Fallback to original image

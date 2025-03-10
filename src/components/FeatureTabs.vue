@@ -18,9 +18,9 @@ const switchTab = (tab) => {
     <div class="flex border-b border-gray-300 dark:border-gray-600 mb-4">
       <button 
         @click="switchTab('resize')" 
-        :class="['px-4 py-2 font-medium', activeTab === 'resize' ? 'text-green-600 dark:text-green-400 border-b-2 border-green-600 dark:border-green-400' : 'text-gray-600 dark:text-gray-400']"
+        :class="['px-2 py-2 font-medium', activeTab === 'resize' ? 'text-green-600 dark:text-green-400 border-b-2 border-green-600 dark:border-green-400' : 'text-gray-600 dark:text-gray-400']"
       >
-        <i class="fas fa-compress-arrows-alt mr-2"></i>Resize
+        <i class="fas fa-compress-arrows-alt mr-2"></i>Optimize
       </button>
       <button 
         @click="switchTab('format')" 

@@ -17,6 +17,7 @@
         </div>
       </div>
       
+      <!--
       <div v-if="optimizedImage" class="absolute bottom-4 left-4 right-4 p-3 rounded-lg bg-white dark:bg-gray-800 bg-opacity-95 dark:bg-opacity-95 flex flex-wrap items-center justify-between gap-2">
         <div>
           <div class="text-xs uppercase tracking-wide font-medium text-gray-500 dark:text-gray-400">Size reduction</div>
@@ -28,10 +29,11 @@
         </div>
         <div>
           <div class="text-xs uppercase tracking-wide font-medium text-gray-500 dark:text-gray-400">Optimized</div>
-          <div class="font-medium">{{ formatSize(optimizedImage?.size) }}</div>
+          <div class="font-medium text-right">{{ formatSize(optimizedImage?.size) }}</div>
         </div>
       </div>
-    </div>
+      -->
+    </div>    
   </div>
 </template>
 

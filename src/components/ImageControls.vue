@@ -30,6 +30,10 @@ const props = defineProps({
       ratio: '1:1',
       position: { x: 0, y: 0 }
     })
+  },
+  currentQuality: {
+    type: Number,
+    default: 80
   }
 });
 
@@ -166,7 +170,8 @@ const handleDownload = async () => {
     
     if (activeTab.value === 'format' && props.cropImage) {
       // Use the cropImageToFormat function to get properly cropped image
-      imageUrl = await props.cropImage();
+      // Pass the current quality value to apply resize settings while formatting
+      imageUrl = await props.cropImage(props.currentQuality);
     } else {
       // For resize tab or if cropImage isn't available, use the regular optimized image
       imageUrl = props.optimizedImage.url;
@@ -215,7 +220,7 @@ watch(compression, (newCompression) => {
                 </div>
                 <div>
                   <p class="text-sm font-medium text-gray-600 dark:text-gray-400">File type</p>
-                  <p class="text-base font-medium">{{ originalImage.type.split('/')[1].toUpperCase() }}</p>
+                  <p class="text-base font-medium text-right">{{ originalImage.type.split('/')[1].toUpperCase() }}</p>
                 </div>
               </div>
             </div>
@@ -223,12 +228,12 @@ watch(compression, (newCompression) => {
             <div class="bg-gray-200 dark:bg-gray-700 p-3 rounded-md">
               <div class="flex justify-between">
                 <div>
-                  <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Original size</p>
+                  <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Original</p>
                   <p class="text-base font-medium">{{ formatSize(originalImage.size) }}</p>
                 </div>
                 <div v-if="optimizedImage">
-                  <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Optimized size</p>
-                  <p class="text-base font-medium">{{ formatSize(optimizedImage.size) }}</p>
+                  <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Optimized</p>
+                  <p class="text-base font-medium text-right">{{ formatSize(optimizedImage.size) }}</p>
                 </div>
               </div>
             </div>

@@ -20,6 +20,9 @@ const activeFeature = ref('resize')
 // For cropping images during format download
 const cropImageFunction = ref(null)
 
+// Track the current quality setting for resize
+const currentQuality = ref(80) // Default 80%
+
 // Format state
 const formatState = ref({
   platform: 'instagram',
@@ -174,6 +177,8 @@ const processImage = async (qualityValue = 80) => {
 // Handle optimization from controls component
 const handleOptimize = (qualityValue) => {
   if (!originalImage.value || isProcessing.value) return;
+  // Update the current quality value
+  currentQuality.value = qualityValue;
   processImage(qualityValue);
 };
 
@@ -273,7 +278,7 @@ const toggleTheme = () => {
         <div v-else class="flex flex-col lg:flex-row gap-8 h-full">
           <!-- Image comparison component -->
           <div class="lg:w-3/4 flex flex-col">
-            <h3 class="text-lg font-semibold mb-3">Image Comparison</h3>
+            <h3 class="text-lg font-semibold mb-3">Preview</h3>
             <div class="flex-grow">
               <!-- Different components based on active feature -->
               <!-- DEBUG 
@@ -329,6 +334,7 @@ const toggleTheme = () => {
                 :active-tab="activeFeature"
                 :format-state="formatState"
                 :crop-image="cropImageFunction"
+                :current-quality="currentQuality"
                 @reset="handleReset"
                 @optimize="handleOptimize"
                 @format="handleFormat"
