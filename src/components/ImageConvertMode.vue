@@ -88,7 +88,7 @@ const getConversionDescription = (format) => {
 <template>
   <div class="convert-container h-full flex flex-col">
     <!-- Preview of the image to be converted -->
-    <div class="image-preview flex-grow bg-gray-100 dark:bg-gray-700 flex items-center justify-center rounded-lg overflow-hidden relative">
+    <div class="image-preview flex-grow bg-slate-200 dark:bg-gray-700 flex items-center justify-center rounded-lg overflow-hidden relative">
       <img 
         :src="originalImage.url" 
         :alt="'Original image in ' + originalImage.type" 

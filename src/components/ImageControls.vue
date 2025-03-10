@@ -299,7 +299,7 @@ watch(compression, (newCompression) => {
     <!-- Feature tabs component at the top -->
     <FeatureTabs @tab-change="switchTab" v-slot="{ activeTab }">
       <!-- Resize tab content -->
-      <div v-if="activeTab === 'resize'" class="bg-gray-100 dark:bg-gray-800 p-4 rounded-md mb-4">
+      <div v-if="activeTab === 'resize'" class="bg-slate-300 dark:bg-gray-800 p-4 rounded-md mb-4">
         <!-- Image details (only shown in resize tab) -->
         <div class="mb-4">
           <div class="flex justify-between items-center mb-3">
@@ -360,7 +360,7 @@ watch(compression, (newCompression) => {
       </div>
 
       <!-- Format tab content -->
-      <div v-if="activeTab === 'format'" class="bg-gray-100 dark:bg-gray-800 p-3 rounded-md mb-4">
+      <div v-if="activeTab === 'format'" class="bg-slate-300 dark:bg-gray-800 p-3 rounded-md mb-4">
         <h3 class="text-lg font-semibold mb-3">Format Settings</h3>
         
         <!-- Formatting explanation 
@@ -400,7 +400,7 @@ watch(compression, (newCompression) => {
               <!-- The entire card follows the aspect ratio -->
               <button 
                 @click="aspectRatio = ratioOption.ratio"
-                :class="['w-full flex flex-col items-center justify-between rounded-md border-2 bg-gray-300 dark:bg-gray-600 overflow-hidden', 
+                :class="['w-full flex flex-col items-center justify-between rounded-md border-2 bg-slate-100 dark:bg-gray-600 overflow-hidden', 
                   aspectRatio === ratioOption.ratio ? 'border-green-600 dark:border-green-500' : 'border-gray-300 dark:border-gray-600']"
                 :style="{
                   aspectRatio: ratioOption.ratio.replace(':', '/'),
@@ -430,7 +430,7 @@ watch(compression, (newCompression) => {
       </div>
       
       <!-- Convert tab content -->
-      <div v-if="activeTab === 'convert'" class="bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-md mb-4">
+      <div v-if="activeTab === 'convert'" class="bg-slate-300 dark:bg-gray-800 px-4 py-2 rounded-md mb-4">
         <h3 class="text-lg font-semibold mb-3">Convert To</h3>
         
         <!-- Format conversion options -->
@@ -442,7 +442,7 @@ watch(compression, (newCompression) => {
               'p-2 rounded-lg border-2 transition-colors flex flex-col items-center',
               props.selectedFormat === 'jpg' 
                 ? 'border-green-600 bg-green-50 dark:border-green-500 dark:bg-green-900/20' 
-                : 'border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
+                : 'border-gray-200 bg-slate-100 dark:border-gray-600 dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
             ]">
             <i class="fas fa-file-image text-2xl mb-1 text-blue-600 dark:text-blue-400"></i>
             <span class="font-semibold">JPG</span>
@@ -456,7 +456,7 @@ watch(compression, (newCompression) => {
               'p-2 rounded-lg border-2 transition-colors flex flex-col items-center',
               props.selectedFormat === 'png' 
                 ? 'border-green-600 bg-green-50 dark:border-green-500 dark:bg-green-900/20' 
-                : 'border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
+                : 'border-gray-200 bg-slate-100 dark:border-gray-600 dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
             ]">
             <i class="fas fa-file-image text-2xl mb-1 text-yellow-600 dark:text-yellow-400"></i>
             <span class="font-semibold">PNG</span>
@@ -470,7 +470,7 @@ watch(compression, (newCompression) => {
               'p-2 rounded-lg border-2 transition-colors flex flex-col items-center',
               props.selectedFormat === 'webp' 
                 ? 'border-green-600 bg-green-50 dark:border-green-500 dark:bg-green-900/20' 
-                : 'border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
+                : 'border-gray-200 bg-slate-100 dark:border-gray-600 dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
             ]">
             <i class="fas fa-globe text-2xl mb-1 text-green-600 dark:text-green-400"></i>
             <span class="font-semibold">WebP</span>
@@ -484,7 +484,7 @@ watch(compression, (newCompression) => {
               'p-2 rounded-lg border-2 transition-colors flex flex-col items-center',
               props.selectedFormat === 'gif' 
                 ? 'border-green-600 bg-green-50 dark:border-green-500 dark:bg-green-900/20' 
-                : 'border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
+                : 'border-gray-200 bg-slate-100 dark:border-gray-600 dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
             ]">
             <i class="fas fa-film text-2xl mb-1 text-purple-600 dark:text-purple-400"></i>
             <span class="font-semibold">GIF</span>
@@ -499,7 +499,7 @@ watch(compression, (newCompression) => {
               'disabled:opacity-50 disabled:cursor-not-allowed',
               props.selectedFormat === 'svg' 
                 ? 'border-green-600 bg-green-50 dark:border-green-500 dark:bg-green-900/20' 
-                : 'border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
+                : 'border-gray-200 bg-slate-100 dark:border-gray-600 dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
             ]"
             :disabled="props.originalImage && props.originalImage.type !== 'image/svg+xml'"
             :title="props.originalImage && props.originalImage.type !== 'image/svg+xml' ? 'Cannot convert raster images to SVG' : 'SVG format'"

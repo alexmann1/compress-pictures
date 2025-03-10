@@ -1,6 +1,6 @@
 <template>
   <div class="h-full">
-    <div class="p-4 bg-gray-100 dark:bg-gray-800 h-full flex flex-col">
+    <div class="p-4 bg-slate-200 dark:bg-gray-800 h-full flex flex-col">
 
       <!-- Formatted image container with fixed dimensions -->
       <div class="flex-grow flex flex-col">
