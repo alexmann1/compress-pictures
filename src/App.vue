@@ -4,6 +4,7 @@ import ImageUploader from './components/ImageUploader.vue'
 import ImageControls from './components/ImageControls.vue'
 import ImageResizeMode from './components/ImageResizeMode.vue'
 import ImageFormatMode from './components/ImageFormatMode.vue'
+import ImageConvertMode from './components/ImageConvertMode.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
 
 // Theme state
@@ -22,6 +23,9 @@ const cropImageFunction = ref(null)
 
 // Track the current quality setting for resize
 const currentQuality = ref(80) // Default 80%
+
+// Selected format for conversion (jpg, png, webp, gif, svg)
+const selectedFormat = ref('jpg')
 
 // Format state
 const formatState = ref({
@@ -198,6 +202,12 @@ const handleFormat = (formatData) => {
   formatState.value = { ...newFormatState };
 };
 
+// Handle format selection for the convert tab
+const handleFormatSelection = (format) => {
+  if (!originalImage.value) return;
+  selectedFormat.value = format;
+};
+
 // Slider position for resize mode
 const sliderPosition = ref(50);
 
@@ -304,6 +314,14 @@ const toggleTheme = () => {
                   @crop-image-ready="cropFunc => cropImageFunction = cropFunc"
                 />
               </template>
+              
+              <!-- CONVERT MODE - For changing file format -->
+              <template v-else-if="activeFeature === 'convert' && originalImage">
+                <ImageConvertMode
+                  :original-image="originalImage"
+                  @format-selected="handleFormatSelection"
+                />
+              </template>
 
               <!-- Loading state -->
               <template v-else>
@@ -335,10 +353,12 @@ const toggleTheme = () => {
                 :format-state="formatState"
                 :crop-image="cropImageFunction"
                 :current-quality="currentQuality"
+                :selected-format="selectedFormat"
                 @reset="handleReset"
                 @optimize="handleOptimize"
                 @format="handleFormat"
                 @tab-change="handleTabChange"
+                @convert-format="handleFormatSelection"
                 class="h-full"
               />
             </div>

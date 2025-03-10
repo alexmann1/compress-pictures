@@ -34,10 +34,14 @@ const props = defineProps({
   currentQuality: {
     type: Number,
     default: 80
+  },
+  selectedFormat: {
+    type: String,
+    default: 'jpg'
   }
 });
 
-const emit = defineEmits(['reset', 'optimize', 'format', 'tab-change']);
+const emit = defineEmits(['reset', 'optimize', 'format', 'tab-change', 'convert-format']);
 
 // Use active tab from props
 const activeTab = computed(() => props.activeTab || 'resize');
@@ -143,6 +147,12 @@ const switchTab = (tab) => {
   emit('tab-change', tab);
 };
 
+// Handle format selection for the convert tab
+const handleFormatSelect = (format) => {
+  // Emit the selected format to the parent component
+  emit('convert-format', format);
+};
+
 // Computed properties
 const reduction = computed(() => {
   if (!props.optimizedImage) return 0;
@@ -160,27 +170,112 @@ const formatSize = (bytes) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
-// Handle image download with proper cropping
+// Convert image to different format
+const convertImageFormat = (imageUrl, format) => {
+  return new Promise((resolve, reject) => {
+    try {
+      // Create an image element to load the image
+      const img = new Image();
+      img.crossOrigin = 'Anonymous'; // Enable CORS for the image
+      
+      img.onload = () => {
+        // Create a canvas to draw the image
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        
+        // Get the canvas context and draw the image
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        
+        // Determine the appropriate MIME type and quality
+        let mimeType;
+        let quality = 0.92; // Default quality
+        
+        switch (format) {
+          case 'jpg':
+          case 'jpeg':
+            mimeType = 'image/jpeg';
+            // Apply quality setting
+            quality = Math.max(0.1, Math.min(1, props.currentQuality / 100));
+            break;
+          case 'png':
+            mimeType = 'image/png';
+            // PNG uses lossless compression, quality doesn't apply
+            break;
+          case 'webp':
+            mimeType = 'image/webp';
+            // Apply quality setting for WebP too
+            quality = Math.max(0.1, Math.min(1, props.currentQuality / 100));
+            break;
+          case 'gif':
+            mimeType = 'image/gif';
+            // GIF uses indexed colors, quality doesn't apply in the same way
+            break;
+          case 'svg':
+            // Special handling for SVG since canvas can't output SVG directly
+            // We're just passing through the original image if it's already an SVG
+            if (props.originalImage.type === 'image/svg+xml') {
+              resolve(imageUrl);
+              return;
+            } else {
+              // Can't convert raster to SVG in the browser
+              reject(new Error('Cannot convert raster image to SVG format'));
+              return;
+            }
+          default:
+            mimeType = 'image/jpeg';
+            break;
+        }
+        
+        // Convert canvas to data URL with the specified format
+        const dataUrl = canvas.toDataURL(mimeType, quality);
+        resolve(dataUrl);
+      };
+      
+      img.onerror = (e) => {
+        reject(new Error('Error loading image for conversion'));
+      };
+      
+      // Set the source of the image to start loading
+      img.src = imageUrl;
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+// Handle image download with proper cropping and format conversion
 const handleDownload = async () => {
   if (!props.optimizedImage) return;
   
   try {
     // Use different image source based on active tab
     let imageUrl;
+    let fileExt = 'jpg'; // Default extension
     
     if (activeTab.value === 'format' && props.cropImage) {
       // Use the cropImageToFormat function to get properly cropped image
       // Pass the current quality value to apply resize settings while formatting
       imageUrl = await props.cropImage(props.currentQuality);
+    } else if (activeTab.value === 'convert') {
+      // For convert tab, use original image but apply format conversion
+      imageUrl = await convertImageFormat(props.originalImage.url, props.selectedFormat);
+      fileExt = props.selectedFormat;
     } else {
       // For resize tab or if cropImage isn't available, use the regular optimized image
       imageUrl = props.optimizedImage.url;
     }
     
+    // Get the original file name without extension
+    const originalName = props.originalImage.name.split('.').slice(0, -1).join('.') || 'image';
+    
     // Create a download link and trigger it
     const link = document.createElement('a');
     link.href = imageUrl;
-    link.download = `optimized-${props.originalImage.name}`;
+    link.download = activeTab.value === 'convert' 
+      ? `${originalName}.${fileExt}` 
+      : `optimized-${props.originalImage.name}`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -334,10 +429,102 @@ watch(compression, (newCompression) => {
         </div>
       </div>
       
-      <!-- Convert tab content (placeholder) -->
-      <div v-if="activeTab === 'convert'" class="bg-gray-100 dark:bg-gray-800 p-4 rounded-md mb-4">
-        <h3 class="text-lg font-semibold mb-3">Convert Settings</h3>
-        <p class="text-gray-600 dark:text-gray-400">Coming soon...</p>
+      <!-- Convert tab content -->
+      <div v-if="activeTab === 'convert'" class="bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-md mb-4">
+        <h3 class="text-lg font-semibold mb-3">Convert To</h3>
+        
+        <!-- Format conversion options -->
+        <div class="grid grid-cols-2 md:grid-cols-2 gap-2 mb-2">
+          <!-- JPG format -->
+          <button 
+            @click="handleFormatSelect('jpg')"
+            :class="[
+              'p-2 rounded-lg border-2 transition-colors flex flex-col items-center',
+              props.selectedFormat === 'jpg' 
+                ? 'border-green-600 bg-green-50 dark:border-green-500 dark:bg-green-900/20' 
+                : 'border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
+            ]">
+            <i class="fas fa-file-image text-2xl mb-1 text-blue-600 dark:text-blue-400"></i>
+            <span class="font-semibold">JPG</span>
+            <span class="text-xs text-gray-500 dark:text-gray-400">Best for photos</span>
+          </button>
+          
+          <!-- PNG format -->
+          <button 
+            @click="handleFormatSelect('png')"
+            :class="[
+              'p-2 rounded-lg border-2 transition-colors flex flex-col items-center',
+              props.selectedFormat === 'png' 
+                ? 'border-green-600 bg-green-50 dark:border-green-500 dark:bg-green-900/20' 
+                : 'border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
+            ]">
+            <i class="fas fa-file-image text-2xl mb-1 text-yellow-600 dark:text-yellow-400"></i>
+            <span class="font-semibold">PNG</span>
+            <span class="text-xs text-gray-500 dark:text-gray-400">Transparency support</span>
+          </button>
+          
+          <!-- WebP format -->
+          <button 
+            @click="handleFormatSelect('webp')"
+            :class="[
+              'p-2 rounded-lg border-2 transition-colors flex flex-col items-center',
+              props.selectedFormat === 'webp' 
+                ? 'border-green-600 bg-green-50 dark:border-green-500 dark:bg-green-900/20' 
+                : 'border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
+            ]">
+            <i class="fas fa-globe text-2xl mb-1 text-green-600 dark:text-green-400"></i>
+            <span class="font-semibold">WebP</span>
+            <span class="text-xs text-gray-500 dark:text-gray-400">Modern web format</span>
+          </button>
+          
+          <!-- GIF format -->
+          <button 
+            @click="handleFormatSelect('gif')"
+            :class="[
+              'p-2 rounded-lg border-2 transition-colors flex flex-col items-center',
+              props.selectedFormat === 'gif' 
+                ? 'border-green-600 bg-green-50 dark:border-green-500 dark:bg-green-900/20' 
+                : 'border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
+            ]">
+            <i class="fas fa-film text-2xl mb-1 text-purple-600 dark:text-purple-400"></i>
+            <span class="font-semibold">GIF</span>
+            <span class="text-xs text-gray-500 dark:text-gray-400">Simple animations</span>
+          </button>
+          
+          <!-- SVG format -->
+          <button 
+            @click="handleFormatSelect('svg')"
+            :class="[
+              'p-2 rounded-lg border-2 transition-colors flex flex-col items-center',
+              'disabled:opacity-50 disabled:cursor-not-allowed',
+              props.selectedFormat === 'svg' 
+                ? 'border-green-600 bg-green-50 dark:border-green-500 dark:bg-green-900/20' 
+                : 'border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
+            ]"
+            :disabled="props.originalImage && props.originalImage.type !== 'image/svg+xml'"
+            :title="props.originalImage && props.originalImage.type !== 'image/svg+xml' ? 'Cannot convert raster images to SVG' : 'SVG format'"
+          >
+            <i class="fas fa-bezier-curve text-2xl mb-1 text-red-600 dark:text-red-400"></i>
+            <span class="font-semibold">SVG</span>
+            <span class="text-xs text-gray-500 dark:text-gray-400">Vector graphics</span>
+          </button>
+        </div>
+        
+        <!-- Format info 
+        <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg text-sm mb-4">
+          <div class="flex items-start">
+            <i class="fas fa-info-circle text-blue-600 dark:text-blue-400 mt-0.5 mr-2"></i>
+            <div>
+              <p class="text-blue-800 dark:text-blue-300">You are converting from 
+                <span class="font-semibold">{{ props.originalImage ? (props.originalImage.type || '').split('/')[1].toUpperCase() : '' }}</span> to 
+                <span class="font-semibold">{{ props.selectedFormat.toUpperCase() }}</span>
+              </p>
+              <p v-if="props.selectedFormat === 'jpg' || props.selectedFormat === 'webp'" class="mt-1 text-blue-700 dark:text-blue-400">
+                Quality setting will be applied: {{ props.currentQuality }}%
+              </p>
+            </div>
+          </div>
+        </div>-->
       </div>
     </FeatureTabs>
 
