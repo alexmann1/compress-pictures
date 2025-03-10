@@ -23,3 +23,14 @@ body {
 .light {
   @apply bg-gray-50 text-gray-900;
 }
+
+/* Cursor styles for image dragging */
+.format-container img {
+  cursor: grab;
+}
+
+.grabbing-cursor,
+.grabbing-cursor * {
+  cursor: grabbing !important;
+  user-select: none !important;
+}

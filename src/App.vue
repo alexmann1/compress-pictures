@@ -1,8 +1,9 @@
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import ImageUploader from './components/ImageUploader.vue'
-import ImageCompare from './components/ImageCompare.vue'
 import ImageControls from './components/ImageControls.vue'
+import ImageResizeMode from './components/ImageResizeMode.vue'
+import ImageFormatMode from './components/ImageFormatMode.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
 
 // Theme state
@@ -12,6 +13,32 @@ const isDarkMode = ref(false)
 const originalImage = ref(null)
 const optimizedImage = ref(null)
 const isProcessing = ref(false)
+
+// Active feature tab - must be defined before using it in watchers
+const activeFeature = ref('resize')
+
+// For cropping images during format download
+const cropImageFunction = ref(null)
+
+// Track the current quality setting for resize
+const currentQuality = ref(80) // Default 80%
+
+// Format state
+const formatState = ref({
+  platform: 'instagram',
+  ratio: '1:1',
+  position: { x: 0, y: 0 } // Initial position (pixel values, will be centered)
+})
+
+// Ensure formatState is always properly initialized
+watch(() => activeFeature.value, (newTab) => {
+  if (newTab === 'format') {
+    // Make sure position is defined
+    if (!formatState.value.position) {
+      formatState.value.position = { x: 0, y: 0 };
+    }
+  }
+})
 
 // Handle image upload
 const handleImageUpload = (file) => {
@@ -27,14 +54,19 @@ const handleImageUpload = (file) => {
     name: file.name,
     type: file.type,
     width: 0,
-    height: 0
+    height: 0,
+    isLandscape: false
   }
+  
+  // Reset position to center for new image
+  formatState.value.position = { x: 0, y: 0 }
   
   // Load image dimensions
   const img = new Image()
   img.onload = () => {
     originalImage.value.width = img.width
     originalImage.value.height = img.height
+    originalImage.value.isLandscape = img.width > img.height
     // Use 35 as the quality value (100 - 65% compression)
     processImage(35)
   }
@@ -142,18 +174,71 @@ const processImage = async (qualityValue = 80) => {
   }
 }
 
-// No need to watch quality as it's now handled in the ImageControls component
-
 // Handle optimization from controls component
 const handleOptimize = (qualityValue) => {
   if (!originalImage.value || isProcessing.value) return;
+  // Update the current quality value
+  currentQuality.value = qualityValue;
   processImage(qualityValue);
+};
+
+// Handle format changes from the controls component
+const handleFormat = (formatData) => {
+  if (!originalImage.value) return;
+  
+  // Ensure formatData has all required properties
+  const newFormatState = {
+    platform: formatData.platform || formatState.value.platform || 'instagram',
+    ratio: formatData.ratio || formatState.value.ratio || '1:1',
+    // Only update position if provided, otherwise keep the current position
+    position: formatData.position || formatState.value.position || { x: 0, y: 0 }
+  };
+    
+  // Important: Create a new object reference to trigger reactivity
+  formatState.value = { ...newFormatState };
+};
+
+// Slider position for resize mode
+const sliderPosition = ref(50);
+
+// Update slider position
+const updateSliderPosition = (position) => {
+  sliderPosition.value = Math.min(Math.max(position, 0), 100);
+};
+
+// Slider drag handler - This is now a delegate function that passes the event to the ImageResizeMode component
+const handleSliderDrag = (e) => {
+  // Implementation has moved to ImageResizeMode component
+};
+
+// Handle tab changes
+const handleTabChange = (tab) => {
+  activeFeature.value = tab;
+  
+  // Force update of the UI when changing tabs
+  if (tab === 'format' && originalImage.value) {
+    // Reset any resize-specific elements
+    const divider = document.querySelector('.slider-divider');
+    if (divider) divider.style.display = 'none';
+  } else if (tab === 'resize' && originalImage.value && optimizedImage.value) {
+    // Reset slider to middle position
+    updateSliderPosition(50);
+    
+    // Show resize divider again
+    const divider = document.querySelector('.slider-divider');
+    if (divider) divider.style.display = 'block';
+  }
 };
 
 // Reset handler
 const handleReset = () => {
   originalImage.value = null
   optimizedImage.value = null
+  formatState.value = {
+    platform: 'instagram',
+    ratio: '1:1',
+    position: { x: 0, y: 0 }
+  }
 }
 
 // Initialize theme based on user preference
@@ -167,28 +252,6 @@ onMounted(() => {
 const toggleTheme = () => {
   isDarkMode.value = !isDarkMode.value
   document.documentElement.classList.toggle('dark', isDarkMode.value)
-}
-
-// Calculate size reduction
-const reduction = computed(() => {
-  if (originalImage.value && optimizedImage.value) {
-    const originalSize = originalImage.value.size
-    const optimizedSize = optimizedImage.value.size
-    const percentage = ((originalSize - optimizedSize) / originalSize) * 100
-    return percentage.toFixed(2)
-  }
-  return '0'
-})
-
-// Format size for display (KB, MB)
-const formatSize = (bytes) => {
-  if (bytes < 1024) {
-    return `${bytes} B`
-  } else if (bytes < 1024 * 1024) {
-    return `${(bytes / 1024).toFixed(2)} KB`
-  } else {
-    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`
-  }
 }
 </script>
 
@@ -215,18 +278,39 @@ const formatSize = (bytes) => {
         <div v-else class="flex flex-col lg:flex-row gap-8 h-full">
           <!-- Image comparison component -->
           <div class="lg:w-3/4 flex flex-col">
-            <h3 class="text-lg font-semibold mb-3">Image Comparison</h3>
+            <h3 class="text-lg font-semibold mb-3">Preview</h3>
             <div class="flex-grow">
-              <ImageCompare 
-                v-if="optimizedImage"
-                :original-src="originalImage.url"
-                :optimized-src="optimizedImage.url"
-                :is-processing="isProcessing"
-                class="h-full"
-              />
-              <div v-else class="flex justify-center items-center h-full bg-gray-100 dark:bg-gray-700 rounded">
-                <i class="fas fa-spinner fa-spin text-3xl"></i>
-              </div>
+              <!-- Different components based on active feature -->
+              <!-- DEBUG 
+              <div class="absolute top-0 left-0 bg-red-500 text-white p-2 z-50">
+                Current Mode: {{ activeFeature }}
+              </div>-->
+              <template v-if="activeFeature === 'resize' && optimizedImage">
+                <ImageResizeMode
+                  :original-image="originalImage"
+                  :optimized-image="optimizedImage"
+                  :slider-position="sliderPosition"
+                  @update-slider="updateSliderPosition"
+                  @slider-drag="handleSliderDrag"
+                />
+              </template>
+              
+              <!-- FORMAT MODE - A completely different component tree -->
+              <template v-else-if="activeFeature === 'format' && originalImage">
+                <ImageFormatMode
+                  :original-image="originalImage"
+                  :format-state="formatState"
+                  @format-change="handleFormat"
+                  @crop-image-ready="cropFunc => cropImageFunction = cropFunc"
+                />
+              </template>
+
+              <!-- Loading state -->
+              <template v-else>
+                <div class="flex justify-center items-center h-full bg-gray-100 dark:bg-gray-700 rounded">
+                  <i class="fas fa-spinner fa-spin text-3xl"></i>
+                </div>
+              </template>
             </div>
           </div>
 
@@ -247,8 +331,14 @@ const formatSize = (bytes) => {
                 :original-image="originalImage" 
                 :optimized-image="optimizedImage" 
                 :is-processing="isProcessing"
+                :active-tab="activeFeature"
+                :format-state="formatState"
+                :crop-image="cropImageFunction"
+                :current-quality="currentQuality"
                 @reset="handleReset"
                 @optimize="handleOptimize"
+                @format="handleFormat"
+                @tab-change="handleTabChange"
                 class="h-full"
               />
             </div>
