@@ -148,6 +148,15 @@ watch(() => props.sliderPosition, (newValue) => {
   }
 });
 
+// Watch for changes in props
+watch(() => props.originalSrc, (newValue) => {
+  console.log('Original image URL changed:', newValue);
+});
+
+watch(() => props.optimizedSrc, (newValue) => {
+  console.log('Optimized image URL changed:', newValue);
+});
+
 // Set initial slider position on mounted and when switching modes
 onMounted(() => {
   if (props.showComparison) {
@@ -183,14 +192,9 @@ watch(() => props.showComparison, (newVal) => {
       <!-- Original image (background) -->
       <div class="absolute inset-0 flex items-center justify-center">
         <div 
-          class="relative overflow-hidden bg-contain bg-center bg-no-repeat" 
+          class="relative overflow-hidden w-full h-full bg-contain bg-center bg-no-repeat" 
           :style="{ 
-            backgroundImage: `url(${originalSrc})`,
-            width: '100%',
-            height: '100%',
-            maxHeight: '100%',
-            maxWidth: '100%',
-            objectFit: 'contain'
+            backgroundImage: originalSrc ? `url(${originalSrc})` : 'none'
           }"
         >
           <!-- Optimized image (foreground with clip) -->
@@ -198,8 +202,8 @@ watch(() => props.showComparison, (newVal) => {
             ref="optimizedImageEl"
             class="absolute inset-0 bg-contain bg-center bg-no-repeat optimized-image" 
             :style="{ 
-              backgroundImage: `url(${optimizedSrc})`,
-              clipPath: 'inset(0 0 0 50%)',
+              backgroundImage: optimizedSrc ? `url(${optimizedSrc})` : 'none',
+              clipPath: `inset(0 0 0 ${sliderPosition}%)`,
               backgroundSize: 'contain'
             }"
           ></div>

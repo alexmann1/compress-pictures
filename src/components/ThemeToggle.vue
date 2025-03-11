@@ -16,7 +16,7 @@ const toggleTheme = () => {
 <template>
   <button 
     @click="toggleTheme"
-    class="p-2 rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
+    class="px-2 py-1 rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
     title="Toggle theme"
   >
     <i 
