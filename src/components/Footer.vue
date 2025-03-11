@@ -1,13 +1,15 @@
 <template>
-      <footer class="py-8 mt-6 border-t border-gray-200 dark:border-gray-700 transition-colors duration-300">
+      <footer class="py-8 mt-6 border-t border-gray-200 dark:border-gray-700 bg-slate-200 dark:bg-gray-800 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 md:px-6">
           <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
             <!-- Logo and tagline -->
             <div class="md:col-span-1">
               <h3 class="text-md font-bold text-gray-800 dark:text-gray-200 mb-3">
-                <i class="fas fa-image mr-2"></i> CompressPictures.com
+                <div class="flex items-center text-sm">
+                  <img src="../assets/logo.png" alt="Logo" class="w-6 h-6 mr-2" style="filter: grayscale(100%);"> Compress <span class="text-gray-600 dark:text-slate-400">Pictures.com</span>
+                </div>                
               </h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">
+              <p class="text-xs text-gray-600 dark:text-gray-400">
                 Free online tool for optimizing your images without sacrificing quality.
               </p>
             </div>

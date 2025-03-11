@@ -73,8 +73,8 @@ const triggerFileInput = () => {
 <template>
   <div 
     class="border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer
-           dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-500"
-    :class="{ 'border-blue-500 bg-blue-50 dark:bg-blue-900/20': isDragging }"
+           dark:border-gray-600 hover:border-green-500 dark:hover:border-green-500"
+    :class="{ 'border-green-500 bg-green-50 dark:bg-green-900/20': isDragging }"
     @dragenter="handleDragEnter"
     @dragleave="handleDragLeave"
     @dragover="handleDragOver"
@@ -90,12 +90,12 @@ const triggerFileInput = () => {
     />
     
     <div class="py-12">
-      <i class="fas fa-cloud-upload-alt text-5xl mb-4 text-blue-500"></i>
+      <i class="fas fa-cloud-upload-alt text-5xl mb-4 text-green-500"></i>
       
       <h3 class="text-xl font-medium mb-2">Drag & Drop your image here</h3>
       <p class="text-gray-600 dark:text-gray-400 mb-6">or click to browse your files</p>
       
-      <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+      <button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors">
         <i class="fas fa-upload mr-2"></i> Select Image
       </button>
       

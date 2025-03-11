@@ -1,3 +1,4 @@
+
 <script setup>
 import { ref, onMounted } from 'vue'
 import ThemeToggle from './components/ThemeToggle.vue'
@@ -24,8 +25,10 @@ const toggleTheme = () => {
     <div class="w-full px-4 md:px-6">
       <!-- Header with theme toggle -->
       <header class="flex justify-between items-center mb-6">
-        <h1 class="text-lg font-bold">
-          <i class="fas fa-image mr-2"></i> CompressPictures.com
+        <h1 class="text-lg">
+          <div class="flex items-center">
+            <img src="./assets/logo.png" alt="Logo" class="w-8 h-8 mr-2 filter"> Compress <span class="text-gray-600 dark:text-green-400">Pictures.com</span>
+          </div>
         </h1>
         <ThemeToggle :is-dark="isDarkMode" @toggle="toggleTheme" />
       </header>
