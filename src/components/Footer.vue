@@ -6,7 +6,7 @@
             <div class="md:col-span-1">
               <h3 class="text-md font-bold text-gray-800 dark:text-gray-200 mb-3">
                 <div class="flex items-center text-sm">
-                  <img src="../assets/logo.png" alt="Logo" class="w-6 h-6 mr-2" style="filter: grayscale(100%);"> Compress <span class="text-gray-600 dark:text-slate-400">Pictures.com</span>
+                  <img src="../assets/logo.png" alt="Logo" class="w-6 h-6 mr-2 dark:invert-0 invert grayscale"> Compress <span class="text-gray-600 dark:text-slate-400">Pictures.com</span>
                 </div>                
               </h3>
               <p class="text-xs text-gray-600 dark:text-gray-400">

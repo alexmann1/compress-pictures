@@ -27,7 +27,7 @@ const toggleTheme = () => {
       <header class="flex justify-between items-center mb-6">
         <h1 class="text-lg">
           <div class="flex items-center">
-            <img src="./assets/logo.png" alt="Logo" class="w-8 h-8 mr-2 filter"> Compress <span class="text-gray-600 dark:text-green-400">Pictures.com</span>
+            <img src="./assets/logo.png" alt="Logo" class="w-8 h-8 mr-2 filter dark:invert-0 invert grayscale dark:grayscale-0"> Compress <span class="text-green-600 dark:text-green-400">Pictures.com</span>
           </div>
         </h1>
         <ThemeToggle :is-dark="isDarkMode" @toggle="toggleTheme" />

@@ -1,0 +1,65 @@
+name: Build and deploy Compress Pictures
+
+on:
+  push:
+    branches: [ "main" ]
+  # or use pull_request, or another event as needed
+
+jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1) Check out repo
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # 2) Set up Node (change version if you prefer 16, 18, etc.)
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # 3) Install dependencies
+      - name: Install dependencies
+        run: npm ci
+        # or "npm install" if you prefer
+
+      # 4) Build production files
+      - name: Build
+        run: npm run build
+        # By default, Vite outputs to a "dist" folder
+
+      # 5) Package the dist folder for transfer
+      - name: Package build artifacts
+        run: zip -r dist.zip dist
+
+      # 6) Securely copy dist.zip to the VM
+      - name: Copy files to Azure VM
+        uses: appleboy/scp-action@v0.1.6
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          port: 22  # change if non-standard
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          overwrite: true
+          source: "dist.zip"
+          target: "/var/www/compresspictures/"  # adjust the path on your VM
+
+      # 7) SSH into VM to finalize deployment
+      - name: Finalize deploy on VM
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          port: 22
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/compresspictures/
+            unzip -o dist.zip
+            # Move or copy files to your final location
+            rm -rf www
+            mv dist www
+            
+            # Cleanup the deploy folder if you want
+            rm -rf dist.zip
