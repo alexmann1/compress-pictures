@@ -252,7 +252,7 @@ const handleDownload = async () => {
   try {
     // Use different image source based on active tab
     let imageUrl;
-    let fileExt = 'jpg'; // Default extension
+    let fileExt = props.optimizedImage.type ? props.optimizedImage.type.split('/')[1] : 'jpg'; // Default extension
     
     if (activeTab.value === 'format' && props.cropImage) {
       // Use the cropImageToFormat function to get properly cropped image
@@ -263,7 +263,7 @@ const handleDownload = async () => {
       imageUrl = await convertImageFormat(props.originalImage.url, props.selectedFormat);
       fileExt = props.selectedFormat;
     } else {
-      // For resize tab or if cropImage isn't available, use the regular optimized image
+      // For resize tab or if cropImage isn't available, use the optimized image URL
       imageUrl = props.optimizedImage.url;
     }
     
@@ -275,7 +275,7 @@ const handleDownload = async () => {
     link.href = imageUrl;
     link.download = activeTab.value === 'convert' 
       ? `${originalName}.${fileExt}` 
-      : `optimized-${props.originalImage.name}`;
+      : `optimized-${originalName}.${fileExt}`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

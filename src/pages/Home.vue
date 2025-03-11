@@ -258,28 +258,58 @@ async function optimizeImage(quality = currentQuality.value) {
   isProcessing.value = true;
 
   try {
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Create a new image object to load the original image
+    const img = new Image();
     
-    console.log('Creating optimized image');
+    // Create a promise to wait for image loading
+    await new Promise((resolve, reject) => {
+      img.onload = resolve;
+      img.onerror = reject;
+      img.src = originalImage.value.url;
+    });
     
-    // Calculate compression ratio based on quality
-    // Lower quality = higher compression = smaller file size
-    const compressionRatio = quality / 100;
+    // Create a canvas element to draw and compress the image
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
     
-    // Higher quality means less reduction (quality 100 = no reduction)
-    // Lower quality means more reduction (quality 1 = maximum reduction)
-    // We're limiting the max reduction to 90% even at the lowest quality
-    const sizeReductionFactor = 1 - ((100 - quality) / 100) * 0.9;
+    // Set canvas dimensions to match the original image
+    canvas.width = originalImage.value.width;
+    canvas.height = originalImage.value.height;
     
-    // For demo purposes, we create an optimized version with a size based on the quality
-    // In a real app, you would apply actual compression here
+    // Draw the image on the canvas
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    
+    // Convert quality from 0-100 scale to 0-1 scale for canvas
+    const canvasQuality = quality / 100;
+    
+    // Get the image type (default to jpeg if not recognized)
+    let imageType = originalImage.value.type;
+    if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(imageType)) {
+      imageType = 'image/jpeg';
+    }
+    
+    // Create a compressed image blob from the canvas
+    const blob = await new Promise(resolve => {
+      canvas.toBlob(resolve, imageType, canvasQuality);
+    });
+    
+    if (!blob) {
+      throw new Error('Failed to create compressed image blob');
+    }
+    
+    // Create a URL for the compressed image
+    const compressedUrl = URL.createObjectURL(blob);
+    
+    // Calculate compression ratio for display purposes
+    const sizeReductionFactor = blob.size / originalImage.value.size;
+    
+    // Update the optimized image with the compressed version
     optimizedImage.value = {
-      file: originalImage.value.file,
-      url: originalImage.value.url, // Using the same URL for demo purposes
-      size: Math.round(originalImage.value.size * sizeReductionFactor), // Adjust size based on quality
+      file: blob,
+      url: compressedUrl,
+      size: blob.size,
       name: originalImage.value.name,
-      type: originalImage.value.type,
+      type: blob.type || imageType,
       width: originalImage.value.width,
       height: originalImage.value.height
     };
@@ -288,6 +318,13 @@ async function optimizeImage(quality = currentQuality.value) {
     console.log('Size reduction:', (1 - sizeReductionFactor) * 100, '%');
   } catch (error) {
     console.error('Error optimizing image:', error);
+    // If compression fails, use the original image as fallback
+    if (originalImage.value) {
+      optimizedImage.value = {
+        ...originalImage.value,
+        size: originalImage.value.size
+      };
+    }
   } finally {
     isProcessing.value = false;
   }
