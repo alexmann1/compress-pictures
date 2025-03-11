@@ -59,6 +59,8 @@ const handleFile = (file) => {
     return
   }
   
+  console.log('Image uploaded:', file)
+  
   // Emit the file to parent component
   emit('image-uploaded', file)
 }

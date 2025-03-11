@@ -6,6 +6,8 @@ import ImageResizeMode from './components/ImageResizeMode.vue'
 import ImageFormatMode from './components/ImageFormatMode.vue'
 import ImageConvertMode from './components/ImageConvertMode.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
+import ContentSection from './components/ContentSection.vue'
+import Footer from './components/Footer.vue'
 
 // Theme state
 const isDarkMode = ref(false)
@@ -266,110 +268,20 @@ const toggleTheme = () => {
 </script>
 
 <template>
-  <div :class="['min-h-screen transition-colors duration-300', isDarkMode ? 'dark' : 'light']">
+  <div class="min-h-screen transition-colors duration-300" :class="isDarkMode ? 'dark' : 'light'">
     <div class="w-full px-4 md:px-6">
       <!-- Header with theme toggle -->
       <header class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold">
-          <i class="fas fa-image mr-2"></i> Image Optimizer
+        <h1 class="text-lg font-bold">
+          <i class="fas fa-image mr-2"></i> CompressPictures.com
         </h1>
         <ThemeToggle :is-dark="isDarkMode" @toggle="toggleTheme" />
       </header>
 
       <!-- Main content -->
-      <main class="rounded-lg shadow-lg p-4 md:p-8 bg-slate-100 dark:bg-gray-800 transition-colors duration-300 w-full mx-auto" style="min-height: 700px;">
-        <!-- Image upload area -->
-        <ImageUploader 
-          v-if="!originalImage" 
-          @image-uploaded="handleImageUpload" 
-        />
-
-        <!-- Image preview and controls -->
-        <div v-else class="flex flex-col lg:flex-row gap-8 h-full">
-          <!-- Image comparison component -->
-          <div class="lg:w-3/4 flex flex-col">
-            <h3 class="text-lg font-semibold mb-3">Preview</h3>
-            <div class="flex-grow">
-              <!-- Different components based on active feature -->
-              <!-- DEBUG 
-              <div class="absolute top-0 left-0 bg-red-500 text-white p-2 z-50">
-                Current Mode: {{ activeFeature }}
-              </div>-->
-              <template v-if="activeFeature === 'resize' && optimizedImage">
-                <ImageResizeMode
-                  :original-image="originalImage"
-                  :optimized-image="optimizedImage"
-                  :slider-position="sliderPosition"
-                  @update-slider="updateSliderPosition"
-                  @slider-drag="handleSliderDrag"
-                />
-              </template>
-              
-              <!-- FORMAT MODE - A completely different component tree -->
-              <template v-else-if="activeFeature === 'format' && originalImage">
-                <ImageFormatMode
-                  :original-image="originalImage"
-                  :format-state="formatState"
-                  @format-change="handleFormat"
-                  @crop-image-ready="cropFunc => cropImageFunction = cropFunc"
-                />
-              </template>
-              
-              <!-- CONVERT MODE - For changing file format -->
-              <template v-else-if="activeFeature === 'convert' && originalImage">
-                <ImageConvertMode
-                  :original-image="originalImage"
-                  @format-selected="handleFormatSelection"
-                />
-              </template>
-
-              <!-- Loading state -->
-              <template v-else>
-                <div class="flex justify-center items-center h-full bg-gray-100 dark:bg-gray-700 rounded">
-                  <i class="fas fa-spinner fa-spin text-3xl"></i>
-                </div>
-              </template>
-            </div>
-          </div>
-
-          <!-- Controls section -->
-          <div class="lg:w-1/4 flex flex-col">
-            <div class="flex justify-end mb-2">
-              <button 
-                @click="handleReset" 
-                class="text-sm px-3 py-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-                title="Reset to default settings"
-              >
-                <i class="fas fa-undo-alt mr-1"></i>Reset
-              </button>
-            </div>
-
-            <div class="flex-grow">
-              <ImageControls 
-                :original-image="originalImage" 
-                :optimized-image="optimizedImage" 
-                :is-processing="isProcessing"
-                :active-tab="activeFeature"
-                :format-state="formatState"
-                :crop-image="cropImageFunction"
-                :current-quality="currentQuality"
-                :selected-format="selectedFormat"
-                @reset="handleReset"
-                @optimize="handleOptimize"
-                @format="handleFormat"
-                @tab-change="handleTabChange"
-                @convert-format="handleFormatSelection"
-                class="h-full"
-              />
-            </div>
-          </div>
-        </div>
-      </main>
-
-      <!-- Footer -->
-      <footer class="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
-        <p>Built by MNCN Labs</p>
-      </footer>
+      <router-view v-slot="{ Component }">
+        <component :is="Component" :isDarkMode="isDarkMode" @toggleTheme="toggleTheme" />
+      </router-view>
     </div>
   </div>
 </template>

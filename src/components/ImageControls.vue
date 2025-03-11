@@ -311,11 +311,11 @@ watch(compression, (newCompression) => {
               <div class="flex justify-between">
                 <div>
                   <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Dimensions</p>
-                  <p class="text-base font-medium">{{ originalImage.width }} × {{ originalImage.height }}</p>
+                  <p class="text-base font-medium">{{ originalImage?.width || 'Unknown' }} × {{ originalImage?.height || 'Unknown' }}</p>
                 </div>
                 <div>
                   <p class="text-sm font-medium text-gray-600 dark:text-gray-400">File type</p>
-                  <p class="text-base font-medium text-right">{{ originalImage.type.split('/')[1].toUpperCase() }}</p>
+                  <p class="text-base font-medium text-right">{{ originalImage?.type ? originalImage.type.split('/')[1].toUpperCase() : 'Unknown' }}</p>
                 </div>
               </div>
             </div>

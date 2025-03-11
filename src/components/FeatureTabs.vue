@@ -18,21 +18,21 @@ const switchTab = (tab) => {
     <div class="flex border-b border-gray-300 dark:border-gray-600 mb-4">
       <button 
         @click="switchTab('resize')" 
-        :class="['px-2 py-2 font-medium', activeTab === 'resize' ? 'text-green-600 dark:text-green-400 border-b-2 border-green-600 dark:border-green-400' : 'text-gray-600 dark:text-gray-400']"
+        :class="['px-1 py-2 font-medium', activeTab === 'resize' ? 'text-green-600 dark:text-green-400 border-b-2 border-green-600 dark:border-green-400' : 'text-gray-600 dark:text-gray-400']"
       >
-        <i class="fas fa-compress-arrows-alt mr-2"></i>Optimize
+        <i class="fas fa-compress-arrows-alt"></i>Compress
       </button>
       <button 
         @click="switchTab('format')" 
         :class="['px-4 py-2 font-medium', activeTab === 'format' ? 'text-green-600 dark:text-green-400 border-b-2 border-green-600 dark:border-green-400' : 'text-gray-600 dark:text-gray-400']"
       >
-        <i class="fas fa-crop-alt mr-2"></i>Format
+        <i class="fas fa-crop-alt"></i>Format
       </button>
       <button 
         @click="switchTab('convert')" 
-        :class="['px-4 py-2 font-medium', activeTab === 'convert' ? 'text-green-600 dark:text-green-400 border-b-2 border-green-600 dark:border-green-400' : 'text-gray-600 dark:text-gray-400']"
+        :class="['px-2 py-2 font-medium', activeTab === 'convert' ? 'text-green-600 dark:text-green-400 border-b-2 border-green-600 dark:border-green-400' : 'text-gray-600 dark:text-gray-400']"
       >
-        <i class="fas fa-exchange-alt mr-2"></i>Convert
+        <i class="fas fa-exchange-alt"></i>Convert
       </button>
     </div>
     
