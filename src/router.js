@@ -3,7 +3,7 @@ import Home from './pages/Home.vue'
 import PrivacyPolicy from './pages/PrivacyPolicy.vue'
 import TermsOfService from './pages/TermsOfService.vue'
 
-const routes = [
+export const routes = [
   {
     path: '/',
     name: 'Home',
@@ -21,13 +21,12 @@ const routes = [
   }
 ]
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-  scrollBehavior() {
-    // Always scroll to top when navigating
-    return { top: 0 }
-  }
-})
-
-export default router
+export function createRouterInstance() {
+  return createRouter({
+    history: createWebHistory(),
+    routes,
+    scrollBehavior() {
+      return { top: 0 }
+    }
+  })
+}

@@ -1,12 +1,17 @@
-import { createApp } from 'vue'
-import './style.css'
+import { ViteSSG } from 'vite-ssg'
 import App from './App.vue'
-import router from './router'
-
-// Import Font Awesome CSS
+import { routes } from './router'
+import './style.css'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 
-// Create and mount the app
-const app = createApp(App)
-app.use(router)
-app.mount('#app')
+// https://github.com/antfu/vite-ssg
+export const createApp = ViteSSG(
+  // the root component
+  App,
+  // vue-router options
+  { routes },
+  // function to have custom setups
+  ({ app, router, routes, isClient, initialState }) => {
+    // install plugins etc.
+  },
+)
