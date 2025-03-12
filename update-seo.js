@@ -77,13 +77,13 @@ const processHtmlFile = (filePath, route) => {
   }
 };
 
-// Map of file paths to routes
+// Map of file paths to routes - Updated to match Vite SSG file structure
 const routeMap = {
   'dist/index.html': '/',
-  'dist/privacy/index.html': '/privacy',
-  'dist/terms/index.html': '/terms',
-  'dist/faq/index.html': '/faq',
-  'dist/features/index.html': '/features'
+  'dist/privacy.html': '/privacy',
+  'dist/terms.html': '/terms',
+  'dist/faq.html': '/faq',
+  'dist/features.html': '/features'
 };
 
 // Process each HTML file
@@ -94,5 +94,24 @@ for (const [filePath, route] of Object.entries(routeMap)) {
     console.log(`[SEO] File not found: ${filePath}`);
   }
 }
+
+// Improve regex patterns
+const improveRegexPatterns = () => {
+  // Check all HTML files in dist folder
+  const files = fs.readdirSync('dist');
+  const htmlFiles = files.filter(file => file.endsWith('.html'));
+  
+  console.log(`[SEO] Found ${htmlFiles.length} HTML files in dist folder`);
+  
+  // List files that weren't processed by the routeMap
+  const processedFiles = Object.keys(routeMap).map(path => path.replace('dist/', ''));
+  const unprocessedFiles = htmlFiles.filter(file => !processedFiles.includes(file));
+  
+  if (unprocessedFiles.length > 0) {
+    console.log(`[SEO] Warning: The following HTML files were not processed: ${unprocessedFiles.join(', ')}`);
+  }
+};
+
+improveRegexPatterns();
 
 console.log('[SEO] Metadata update complete!');
