@@ -2,6 +2,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import ThemeToggle from './components/ThemeToggle.vue'
+import PageMeta from './components/PageMeta.vue'
 import { useHead } from '@vueuse/head'
 
 // Set default metadata (will be overridden by page-specific metadata)
@@ -53,6 +54,9 @@ const toggleTheme = () => {
         <ThemeToggle :is-dark="isDarkMode" @toggle="toggleTheme" />
       </header>
 
+      <!-- SEO Metadata -->
+      <PageMeta />
+      
       <!-- Main content -->
       <router-view v-slot="{ Component }">
         <component :is="Component" :isDarkMode="isDarkMode" @toggleTheme="toggleTheme" />
