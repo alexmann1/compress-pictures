@@ -36,7 +36,7 @@ const pagesMetadata = {
     ogImage: 'https://compresspictures.com/logo.png'
   },
   'faq.html': {
-    title: 'FAQ - CompressPictures.com',
+    title: 'Frequently Asked Questions - CompressPictures.com',
     description: 'Frequently Asked Questions about our image optimization services.',
     keywords: 'image optimizer faq, compress pictures help, image compression questions, frequently asked questions',
     canonical: 'https://compresspictures.com/faq',
