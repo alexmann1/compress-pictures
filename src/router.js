@@ -18,7 +18,15 @@ export const routes = [
     path: '/terms',
     name: 'TermsOfService',
     component: TermsOfService
-  }
+  },
+  {
+    path: '/faq',
+    redirect: '/#faq'
+  },
+  {
+    path: '/features',
+    redirect: '/#features'
+  }  
 ]
 
 export function createRouterInstance() {
