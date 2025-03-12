@@ -10,5 +10,9 @@ export default defineConfig({
     crittersOptions: {
       reduceInlineStyles: false,
     },
+    includedRoutes(paths) {
+      // Return all routes since we want to pre-render all pages
+      return paths
+    }
   }
 })

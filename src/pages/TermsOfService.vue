@@ -1,9 +1,5 @@
 <template>
-  <PageMeta 
-    title="Terms of Service - CompressPictures.com"
-    description="Terms of Service for CompressPictures.com - Understand the rules and conditions for using our image optimization services."
-    keywords="terms of service, terms and conditions, user agreement, service terms, legal terms"
-  />  
+  <PageMeta />  
   <div class="min-h-screen transition-colors duration-300" :class="isDarkMode ? 'dark' : 'light'">
     <div class="w-full px-4 md:px-6">
       <!-- Header with theme toggle and back button -->

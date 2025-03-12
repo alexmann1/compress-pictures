@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite-ssg build",
+    "build:seo": "vite-ssg build && ./update-seo.sh",
     "preview": "vite preview"
   },
   "dependencies": {
