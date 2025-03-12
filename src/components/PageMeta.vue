@@ -19,26 +19,46 @@ const fullTitle = computed(() => {
     : `${title.value} | CompressPictures.com`
 })
 
+// Get the current canonical URL
+const canonicalUrl = computed(() => {
+  const path = route.path === '/' ? '' : route.path
+  return `https://compresspictures.com${path}`
+})
+
 // Apply the metadata
 useHead({
+  // Basic meta tags
   title: fullTitle,
   meta: [
     { name: 'description', content: description },
     { name: 'keywords', content: keywords },
     { name: 'author', content: author },
-    // Add Open Graph tags for better social media sharing
+    
+    // Open Graph tags for better social media sharing
     { property: 'og:title', content: fullTitle },
     { property: 'og:description', content: description },
     { property: 'og:type', content: 'website' },
-    { property: 'og:url', content: 'https://compresspictures.com' },
+    { property: 'og:url', content: canonicalUrl },
+    { property: 'og:image', content: 'https://compresspictures.com/logo.png' },
+    { property: 'og:site_name', content: 'CompressPictures.com' },
+    
     // Twitter Card tags
     { name: 'twitter:card', content: 'summary' },
     { name: 'twitter:title', content: fullTitle },
-    { name: 'twitter:description', content: description }
+    { name: 'twitter:description', content: description },
+    { name: 'twitter:image', content: 'https://compresspictures.com/logo.png' },
+    
+    // Additional SEO meta tags
+    { name: 'robots', content: 'index, follow' },
+    { name: 'googlebot', content: 'index, follow' },
+  ],
+  link: [
+    // Canonical URL to avoid duplicate content issues
+    { rel: 'canonical', href: canonicalUrl }
   ]
 })
 </script>
 
 <template>
-  <!-- This is an invisible component that only affects the document head -->
+  <!-- This component doesn't render anything in the DOM -->
 </template>
