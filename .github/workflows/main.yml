@@ -27,7 +27,7 @@ jobs:
 
       # 4) Build production files
       - name: Build
-        run: npm run build
+        run: npm run build:seo
         # By default, Vite outputs to a "dist" folder
 
       # 5) Package the dist folder for transfer
