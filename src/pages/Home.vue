@@ -1,4 +1,9 @@
 <template>
+  <PageMeta 
+    title="Free Online Image Resizer/Compression - High-Quality & Fast"
+    description="Instantly reduce your image file size, effortlessly adapt them for any social media platform, and quickly convert between image formats."
+    keywords="image optimizer, image compression, image converter, compress jpeg, compress png, compress webp, compress gif, compress svg, free image tool, online image compression"
+  />  
   <div>
     <main class="rounded-lg shadow-lg p-4 md:p-8 bg-slate-100 dark:bg-gray-800 transition-colors duration-300 w-full mx-auto" style="min-height: 700px;">
       <h1 class="text-2xl font-bold mb-1 text-center">Free Image Optimizer</h1>
@@ -103,6 +108,7 @@ import ImageResizeMode from '../components/ImageResizeMode.vue'
 import ImageFormatMode from '../components/ImageFormatMode.vue'
 import ImageConvertMode from '../components/ImageConvertMode.vue'
 import ContentSection from '../components/ContentSection.vue'
+import PageMeta from '../components/PageMeta.vue'
 import Footer from '../components/Footer.vue'
 
 // Define emits

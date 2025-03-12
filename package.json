@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
+    "@vueuse/head": "^2.0.0",
     "browser-image-compression": "^2.0.2",
     "vite-ssg": "^25.2.0",
     "vue": "^3.5.13",

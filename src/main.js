@@ -1,4 +1,5 @@
 import { ViteSSG } from 'vite-ssg'
+import { createHead } from '@vueuse/head'
 import App from './App.vue'
 import { routes } from './router'
 import './style.css'
@@ -13,5 +14,7 @@ export const createApp = ViteSSG(
   // function to have custom setups
   ({ app, router, routes, isClient, initialState }) => {
     // install plugins etc.
+    const head = createHead()
+    app.use(head)
   },
 )
