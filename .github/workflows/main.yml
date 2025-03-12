@@ -202,7 +202,96 @@ jobs:
             
             # Execute the server-side fix script
             echo "Running server-side SEO fix script..."
-            node /var/www/compresspictures/fix-seo.js
+            if command -v node > /dev/null; then
+              echo "Using 'node' command to run SEO fix script"
+              node /var/www/compresspictures/fix-seo.js
+            elif command -v nodejs > /dev/null; then
+              echo "Using 'nodejs' command to run SEO fix script"
+              nodejs /var/www/compresspictures/fix-seo.js
+            else
+              echo "Node.js not found. Attempting to install Node.js..."
+              # Try to install Node.js using apt-get
+              if command -v apt-get > /dev/null; then
+                echo "Installing Node.js using apt-get..."
+                apt-get update && apt-get install -y nodejs
+                if command -v node > /dev/null; then
+                  echo "Node.js installed successfully. Running SEO fix script..."
+                  node /var/www/compresspictures/fix-seo.js
+                elif command -v nodejs > /dev/null; then
+                  echo "Node.js installed successfully. Running SEO fix script..."
+                  nodejs /var/www/compresspictures/fix-seo.js
+                else
+                  echo "Failed to install Node.js. SEO fix script will not run."
+                  # Create a simple shell script to manually fix the SEO metadata as a fallback
+                  echo "Creating shell script fallback for SEO fixes..."
+                  cat > /var/www/compresspictures/fix-seo.sh << 'EOSH'
+#!/bin/bash
+echo "[SEO-Fix] Starting SEO metadata fix using shell script..."
+
+# Define the metadata for each route
+declare -A titles
+declare -A descriptions
+
+titles["index.html"]="Free Online Image Resizer/Compression - High-Quality & Fast"
+descriptions["index.html"]="Instantly reduce your image file size, effortlessly adapt them for any social media platform, and quickly convert between image formats."
+
+titles["privacy.html"]="Privacy Policy - CompressPictures.com"
+descriptions["privacy.html"]="Privacy Policy for CompressPictures.com - Learn how we handle your data and protect your privacy."
+
+titles["terms.html"]="Terms of Service - CompressPictures.com"
+descriptions["terms.html"]="Terms of Service for CompressPictures.com - Understand the rules and conditions for using our image optimization services."
+
+titles["faq.html"]="FAQ - CompressPictures.com"
+descriptions["faq.html"]="Frequently Asked Questions about our image optimization services."
+
+titles["features.html"]="Features - CompressPictures.com"
+descriptions["features.html"]="Explore the features of our free image optimization service."
+
+# Process each HTML file
+for file in /var/www/compresspictures/www/*.html; do
+  filename=$(basename "$file")
+  echo "[SEO-Fix] Processing $filename"
+  
+  # Create backup
+  cp "$file" "${file}.bak"
+  
+  # Get the title and description for this file
+  title="${titles[$filename]}"
+  description="${descriptions[$filename]}"
+  
+  if [ -n "$title" ] && [ -n "$description" ]; then
+    # Replace title and description using sed
+    sed -i "s|<title>[^<]*</title>|<title>$title</title>|" "$file"
+    sed -i "s|<meta name=\"description\" content=\"[^\"]*\"|<meta name=\"description\" content=\"$description\"|" "$file"
+    
+    # Also update OpenGraph tags
+    sed -i "s|<meta property=\"og:title\" content=\"[^\"]*\"|<meta property=\"og:title\" content=\"$title\"|" "$file"
+    sed -i "s|<meta property=\"og:description\" content=\"[^\"]*\"|<meta property=\"og:description\" content=\"$description\"|" "$file"
+    
+    # And Twitter tags
+    sed -i "s|<meta name=\"twitter:title\" content=\"[^\"]*\"|<meta name=\"twitter:title\" content=\"$title\"|" "$file"
+    sed -i "s|<meta name=\"twitter:description\" content=\"[^\"]*\"|<meta name=\"twitter:description\" content=\"$description\"|" "$file"
+    
+    echo "[SEO-Fix] Updated metadata for $filename"
+  else
+    echo "[SEO-Fix] No metadata defined for $filename"
+  fi
+done
+
+echo "[SEO-Fix] SEO metadata update complete!"
+EOSH
+                  
+                  # Make the shell script executable
+                  chmod +x /var/www/compresspictures/fix-seo.sh
+                  
+                  # Run the shell script
+                  echo "Running shell script fallback for SEO fixes..."
+                  /var/www/compresspictures/fix-seo.sh
+                fi
+              else
+                echo "Neither Node.js nor apt-get is available. SEO fix script will not run."
+              fi
+            fi
             
             # Cleanup the deploy folder if you want
             rm -rf dist.zip
