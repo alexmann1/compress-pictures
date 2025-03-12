@@ -1,0 +1,24 @@
+RewriteEngine On
+
+# If the requested URL doesn't have an extension (e.g. /privacy rather than /privacy.html)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !\.html$
+RewriteCond %{REQUEST_URI} !\.js$
+RewriteCond %{REQUEST_URI} !\.css$
+RewriteCond %{REQUEST_URI} !\.png$
+RewriteCond %{REQUEST_URI} !\.jpg$
+RewriteCond %{REQUEST_URI} !\.jpeg$
+RewriteCond %{REQUEST_URI} !\.gif$
+RewriteCond %{REQUEST_URI} !\.svg$
+RewriteCond %{REQUEST_URI} !\.ico$
+RewriteCond %{REQUEST_URI} !\.webp$
+RewriteCond %{REQUEST_URI} !\.woff$
+RewriteCond %{REQUEST_URI} !\.woff2$
+
+# Rewrite to the corresponding HTML file
+RewriteRule ^(.*)$ $1.html [L]
+
+# If that HTML file doesn't exist, redirect to index.html for SPA routing
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.html [L]

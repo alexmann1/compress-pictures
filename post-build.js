@@ -227,6 +227,52 @@ for (const htmlFile of htmlFiles) {
   }
 }
 
+// Create clean URL directories for key pages and copy the HTML files
+console.log('[Post-Build] Creating clean URL structure for SEO-friendly URLs...');
+
+// Mapping of HTML files to directory names (for clean URLs)
+const cleanUrlMap = {
+  'privacy.html': 'privacy',
+  'terms.html': 'terms',
+  'features.html': 'features'
+};
+
+// Create clean URL directories and copy HTML files
+for (const [htmlFile, dirName] of Object.entries(cleanUrlMap)) {
+  try {
+    const sourceFile = path.join(distDir, htmlFile);
+    if (!fs.existsSync(sourceFile)) {
+      console.warn(`[Post-Build] Source file ${sourceFile} does not exist, skipping clean URL creation.`);
+      continue;
+    }
+    
+    // Create directory if it doesn't exist
+    const targetDir = path.join(distDir, dirName);
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+    
+    // Copy the HTML file to the directory as index.html
+    const targetFile = path.join(targetDir, 'index.html');
+    fs.copyFileSync(sourceFile, targetFile);
+    
+    console.log(`[Post-Build] Created clean URL: /${dirName}/ -> copied ${htmlFile} to ${targetFile}`);
+    
+    // Update metadata for the new index.html file
+    const newFilePath = path.join(targetDir, 'index.html');
+    const newMetadata = pagesMetadata[htmlFile];
+    const newSuccess = updateFileContent(newFilePath, newMetadata);
+    
+    if (newSuccess) {
+      successCount++;
+    } else {
+      failCount++;
+    }
+  } catch (error) {
+    console.error(`[Post-Build] Error creating clean URL for ${htmlFile}:`, error);
+  }
+}
+
 console.log(`[Post-Build] SEO metadata update complete! Success: ${successCount}, Failed: ${failCount}`);
 
 // If any updates failed, exit with an error code
