@@ -1,9 +1,5 @@
 <template>
-  <PageMeta 
-    title="Privacy Policy - CompressPictures.com"
-    description="Privacy Policy for CompressPictures.com - Learn how we handle your data and protect your privacy."
-    keywords="privacy policy, data protection, image optimizer privacy, user data, cookies policy"
-  />  
+  <PageMeta />  
   <div class="min-h-screen transition-colors duration-300" :class="isDarkMode ? 'dark' : 'light'">
     <div class="w-full px-0">
       <!-- Header with theme toggle and back button -->
