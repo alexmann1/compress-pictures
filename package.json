@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "vite",
     "build": "vite-ssg build && node post-build.js",
-    "build:seo": "vite-ssg build && node post-build.js",
     "preview": "vite preview"
   },
   "dependencies": {
