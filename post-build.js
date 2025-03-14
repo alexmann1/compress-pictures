@@ -128,9 +128,8 @@ function updateFileContent(filePath, metadata) {
       preservedTags.push(viewportMatch[0]);
     }
     
-    const adsTags = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4577146981460520"
-    crossorigin="anonymous"></script>
-    <meta name="google-adsense-account" content="ca-pub-4577146981460520">`;
+    const adsTags = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4577146981460520" crossorigin="anonymous"></script>
+<meta name="google-adsense-account" content="ca-pub-4577146981460520">`;
 
 
     // Our SEO meta tags
