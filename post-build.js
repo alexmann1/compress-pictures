@@ -128,13 +128,17 @@ function updateFileContent(filePath, metadata) {
       preservedTags.push(viewportMatch[0]);
     }
     
+    const adsTags = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4577146981460520"
+    crossorigin="anonymous"></script>
+    <meta name="google-adsense-account" content="ca-pub-4577146981460520">`;
+
+
     // Our SEO meta tags
     const seoTags = `
 <title>${metadata.title}</title>
 <meta name="description" content="${metadata.description}">
 <meta name="keywords" content="${metadata.keywords}">
 <meta name="author" content="CompressPictures.com">
-<meta name="google-adsense-account" content="ca-pub-4577146981460520">
 <meta property="og:title" content="${metadata.title}">
 <meta property="og:description" content="${metadata.description}">
 <meta property="og:type" content="website">
@@ -150,7 +154,7 @@ function updateFileContent(filePath, metadata) {
 <link rel="canonical" href="${metadata.canonical}">`;
     
     // Construct the head section with preserved tags and our SEO tags
-    const newHead = '<head>' + preservedTags.join('') + seoTags;
+    const newHead = '<head>' + preservedTags.join('') + adsTags + seoTags;
     
     // Extract the CSS/JS links
     const cssJsMatches = html.match(/<link rel="(stylesheet|modulepreload)"[^>]+>|<script type="module"[^>]+><\/script>/g) || [];
