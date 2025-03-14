@@ -109,6 +109,9 @@ function updateFileContent(filePath, metadata) {
     if (googleTagMatch) {
       preservedTags.push(googleTagMatch[0]);
     }
+
+    const googleAdsTag = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4577146981460520" crossorigin="anonymous"></script>`;
+    preservedTags.push(googleAdsTag);
     
     // Extract charset tag
     const charsetMatch = html.match(/<meta charset="[^"]+">/);
@@ -126,15 +129,12 @@ function updateFileContent(filePath, metadata) {
     const viewportMatch = html.match(/<meta name="viewport"[^>]+>/);
     if (viewportMatch) {
       preservedTags.push(viewportMatch[0]);
-    }
-    
-    const adsTags = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4577146981460520" crossorigin="anonymous"></script>
-<meta name="google-adsense-account" content="ca-pub-4577146981460520">`;
-
+    }  
 
     // Our SEO meta tags
     const seoTags = `
 <title>${metadata.title}</title>
+<meta name="google-adsense-account" content="ca-pub-4577146981460520">
 <meta name="description" content="${metadata.description}">
 <meta name="keywords" content="${metadata.keywords}">
 <meta name="author" content="CompressPictures.com">
