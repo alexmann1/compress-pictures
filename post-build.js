@@ -153,7 +153,7 @@ function updateFileContent(filePath, metadata) {
 <link rel="canonical" href="${metadata.canonical}">`;
     
     // Construct the head section with preserved tags and our SEO tags
-    const newHead = '<head>' + preservedTags.join('') + adsTags + seoTags;
+    const newHead = '<head>' + preservedTags.join('') + seoTags;
     
     // Extract the CSS/JS links
     const cssJsMatches = html.match(/<link rel="(stylesheet|modulepreload)"[^>]+>|<script type="module"[^>]+><\/script>/g) || [];
