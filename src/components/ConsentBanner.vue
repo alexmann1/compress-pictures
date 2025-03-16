@@ -150,21 +150,39 @@ const privacyLawStates = [
 // Check if user is in a region requiring consent
 const checkIfConsentRequired = async () => {
   try {
-    // Try to get user's country using a geolocation API
-    const response = await fetch('https://ipapi.co/json/');
-    const data = await response.json();
+    // Use browser language/locale to determine region
+    const browserLang = navigator.language || navigator.userLanguage || '';
+    const langCode = browserLang.split('-')[0].toUpperCase();
+    const countryCode = browserLang.includes('-') ? browserLang.split('-')[1].toUpperCase() : langCode;
     
-    // Check if user is in a GDPR region
-    const isGdprRegion = gdprRegions.includes(data.country_code);
+    // Check if language suggests EU region
+    const euLanguages = ['DE', 'FR', 'IT', 'ES', 'PT', 'NL', 'DA', 'SV', 'FI', 'EL', 'CS', 'ET', 'HU', 'LV', 'LT', 'MT', 'PL', 'SK', 'SL'];
+    const isEuLanguage = euLanguages.includes(langCode);
     
-    // Check if user is in a US state with privacy laws
-    const isPrivacyLawState = 
-      data.country_code === 'US' && 
-      privacyLawStates.some(state => data.region_name?.includes(state));
+    // Check if country code is in GDPR regions
+    const isGdprRegion = gdprRegions.includes(countryCode);
     
-    return isGdprRegion || isPrivacyLawState;
+    // Check for US and try to determine state from timezone
+    const isUS = countryCode === 'US' || browserLang.includes('en-US');
+    let isPrivacyLawState = false;
+    
+    if (isUS) {
+      // Check timezone for US states with privacy laws
+      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+      isPrivacyLawState = timeZone.includes('Los_Angeles') || // California
+                          timeZone.includes('Denver') ||      // Colorado 
+                          timeZone.includes('New_York');      // Connecticut
+    }
+    
+    // If we can determine the user is NOT in a regulated region, return false
+    // Otherwise default to true for safety
+    if (!isEuLanguage && !isGdprRegion && !isPrivacyLawState && !isUS) {
+      return false;
+    }
+    
+    return true;
   } catch (error) {
-    console.error('Error determining user location:', error);
+    console.error('Error determining user region:', error);
     // Default to showing the banner if we can't determine location
     return true;
   }
