@@ -3,6 +3,7 @@
 import { ref, onMounted } from 'vue'
 import ThemeToggle from './components/ThemeToggle.vue'
 import PageMeta from './components/PageMeta.vue'
+import ConsentBanner from './components/ConsentBanner.vue'
 import { useHead } from '@vueuse/head'
 
 // Set default metadata (will be overridden by page-specific metadata)
@@ -26,12 +27,24 @@ useHead({
 
 // Theme state
 const isDarkMode = ref(false)
+const consentBannerRef = ref(null)
 
 // Initialize theme based on user preference
 onMounted(() => {
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
   isDarkMode.value = prefersDark
   document.documentElement.classList.toggle('dark', isDarkMode.value)
+  
+  // Check if user has already provided consent
+  const hasConsent = localStorage.getItem('cookie-consent')
+  if (!hasConsent) {
+    // Show consent banner if no consent is found
+    setTimeout(() => {
+      if (consentBannerRef.value) {
+        consentBannerRef.value.showConsentBanner()
+      }
+    }, 1000) // Show after 1 second delay
+  }
 })
 
 // Toggle theme
@@ -62,5 +75,8 @@ const toggleTheme = () => {
         <component :is="Component" :isDarkMode="isDarkMode" @toggleTheme="toggleTheme" />
       </router-view>
     </div>
+    
+    <!-- GDPR Consent Banner -->
+    <ConsentBanner ref="consentBannerRef" />
   </div>
 </template>
