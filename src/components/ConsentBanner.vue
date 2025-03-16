@@ -188,15 +188,57 @@ const checkIfConsentRequired = async () => {
   }
 };
 
-// Check for existing consent
+// Initialize Google Consent Mode v2
+const initializeGoogleConsentMode = () => {
+  // Set up Google's consent mode v2 - must run before Google Tag/Analytics loads
+  if (window.gtag) {
+    // Already initialized
+    return;
+  }
+  
+  // Define dataLayer and gtag function
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { window.dataLayer.push(arguments); }
+  window.gtag = gtag;
+  
+  // Set default consent to 'denied' for regulated regions
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'analytics_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'functionality_storage': 'denied',
+    'security_storage': 'granted', // Security cookies are always allowed
+    'wait_for_update': 500 // Wait for consent banner interaction
+  });
+};
+
+// Apply consent settings to Google's consent mode
+const applyGoogleConsentMode = (preferences) => {
+  if (window.gtag) {
+    window.gtag('consent', 'update', {
+      'analytics_storage': preferences.analytics ? 'granted' : 'denied',
+      'functionality_storage': preferences.functional ? 'granted' : 'denied',
+      'ad_storage': 'denied', // We don't use ad cookies, so always deny
+      'ad_user_data': 'denied',
+      'ad_personalization': 'denied',
+      'security_storage': 'granted' // Security cookies are always allowed
+    });
+  }
+};
+
+// Check for existing consent and initialize Google Consent Mode
 onMounted(async () => {
+  // Initialize Google Consent Mode regardless of region
+  initializeGoogleConsentMode();
+  
   const hasConsent = localStorage.getItem('cookie-consent');
   
   if (!hasConsent) {
     const consentRequired = await checkIfConsentRequired();
     
     if (consentRequired) {
-      // Don't show banner immediately, parent component will call showConsentBanner
+      // Don't show banner immediately, parent component will call checkAndShowBanner
     } else {
       // For users in non-regulated regions, set default consent
       saveConsent({
@@ -204,6 +246,20 @@ onMounted(async () => {
         analytics: true,
         functional: true
       });
+    }
+  } else {
+    // If consent exists, apply it to Google Consent Mode
+    try {
+      const savedPreferences = JSON.parse(hasConsent);
+      cookiePreferences.value = {
+        ...cookiePreferences.value,
+        ...savedPreferences
+      };
+      
+      // Apply existing consent to Google's consent mode
+      applyGoogleConsentMode(cookiePreferences.value);
+    } catch (e) {
+      console.error('Error parsing saved consent:', e);
     }
   }
 });
@@ -249,20 +305,6 @@ const saveCustomPreferences = () => {
     analytics: cookiePreferences.value.analytics,
     functional: cookiePreferences.value.functional
   });
-};
-
-// Google consent mode integration
-const applyGoogleConsentMode = (preferences) => {
-  if (window.gtag) {
-    window.gtag('consent', 'update', {
-      'analytics_storage': preferences.analytics ? 'granted' : 'denied',
-      'functionality_storage': preferences.functional ? 'granted' : 'denied',
-      'ad_storage': 'denied', // We don't use ad cookies, so always deny
-      'ad_user_data': 'denied',
-      'ad_personalization': 'denied',
-      'security_storage': 'granted' // Security cookies are always allowed
-    });
-  }
 };
 
 // Expose methods for parent components
