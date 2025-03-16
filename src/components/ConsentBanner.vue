@@ -113,7 +113,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 
-// State
+// Banner visibility state
 const showBanner = ref(false);
 const showCustomizeOptions = ref(false);
 const cookiePreferences = ref({
@@ -122,60 +122,109 @@ const cookiePreferences = ref({
   functional: false
 });
 
-// Check if consent has been given before
-onMounted(() => {
-  const savedConsent = localStorage.getItem('cookie-consent');
-  if (!savedConsent) {
-    // No consent saved, show the banner
-    showBanner.value = true;
-  } else {
-    // Consent was given before, parse preferences
-    try {
-      const savedPreferences = JSON.parse(savedConsent);
-      cookiePreferences.value = {
-        ...cookiePreferences.value,
-        ...savedPreferences
-      };
-      
-      // Apply consent to Google's consent mode if available
-      applyGoogleConsentMode(cookiePreferences.value);
-    } catch (e) {
-      console.error('Error parsing saved consent:', e);
-      showBanner.value = true;
+// List of regions where GDPR or similar laws apply
+const gdprRegions = [
+  // EU countries
+  'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 
+  'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 
+  'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE',
+  // EEA countries (non-EU)
+  'IS', 'LI', 'NO',
+  // UK (separate from EU after Brexit)
+  'GB',
+  // Other countries with similar laws
+  'BR', // Brazil (LGPD)
+  'CH', // Switzerland
+  'CA' // Canada (PIPEDA)
+];
+
+// US states with privacy laws
+const privacyLawStates = [
+  'California', // CCPA
+  'Colorado',
+  'Connecticut',
+  'Utah',
+  'Virginia'
+];
+
+// Check if user is in a region requiring consent
+const checkIfConsentRequired = async () => {
+  try {
+    // Try to get user's country using a geolocation API
+    const response = await fetch('https://ipapi.co/json/');
+    const data = await response.json();
+    
+    // Check if user is in a GDPR region
+    const isGdprRegion = gdprRegions.includes(data.country_code);
+    
+    // Check if user is in a US state with privacy laws
+    const isPrivacyLawState = 
+      data.country_code === 'US' && 
+      privacyLawStates.some(state => data.region_name?.includes(state));
+    
+    return isGdprRegion || isPrivacyLawState;
+  } catch (error) {
+    console.error('Error determining user location:', error);
+    // Default to showing the banner if we can't determine location
+    return true;
+  }
+};
+
+// Check for existing consent
+onMounted(async () => {
+  const hasConsent = localStorage.getItem('cookie-consent');
+  
+  if (!hasConsent) {
+    const consentRequired = await checkIfConsentRequired();
+    
+    if (consentRequired) {
+      // Don't show banner immediately, parent component will call showConsentBanner
+    } else {
+      // For users in non-regulated regions, set default consent
+      saveConsent({
+        essential: true,
+        analytics: true,
+        functional: true
+      });
     }
   }
 });
 
-// Methods
+// Save consent to localStorage
 const saveConsent = (preferences) => {
-  localStorage.setItem('cookie-consent', JSON.stringify(preferences));
-  showBanner.value = false;
-  showCustomizeOptions.value = false;
+  const consentData = {
+    ...preferences,
+    timestamp: new Date().toISOString()
+  };
   
-  // Apply consent to Google's consent mode
+  localStorage.setItem('cookie-consent', JSON.stringify(consentData));
+  
+  // Apply consent settings to Google Analytics
   applyGoogleConsentMode(preferences);
+  
+  // Hide banner after saving
+  showBanner.value = false;
 };
 
+// Accept all cookies
 const acceptAllCookies = () => {
-  const allAccepted = {
+  saveConsent({
     essential: true,
     analytics: true,
     functional: true
-  };
-  cookiePreferences.value = allAccepted;
-  saveConsent(allAccepted);
+  });
 };
 
+// Accept only essential cookies
 const acceptEssentialCookies = () => {
-  const essentialOnly = {
+  saveConsent({
     essential: true,
     analytics: false,
     functional: false
-  };
-  cookiePreferences.value = essentialOnly;
-  saveConsent(essentialOnly);
+  });
 };
 
+// Save custom preferences
 const saveCustomPreferences = () => {
   saveConsent({
     essential: true, // Always required
@@ -186,34 +235,57 @@ const saveCustomPreferences = () => {
 
 // Google consent mode integration
 const applyGoogleConsentMode = (preferences) => {
-  // Check if window and gtag are available (client-side only)
-  if (typeof window !== 'undefined' && window.gtag) {
+  if (window.gtag) {
     window.gtag('consent', 'update', {
       'analytics_storage': preferences.analytics ? 'granted' : 'denied',
       'functionality_storage': preferences.functional ? 'granted' : 'denied',
-      'ad_storage': 'denied', // We don't have advertising cookies in our preferences, so default to denied
+      'ad_storage': 'denied', // We don't use ad cookies, so always deny
       'ad_user_data': 'denied',
-      'ad_personalization': 'denied'
+      'ad_personalization': 'denied',
+      'security_storage': 'granted' // Security cookies are always allowed
     });
   }
 };
 
 // Expose methods for parent components
 defineExpose({
-  showConsentBanner: () => {
+  showConsentBanner() {
     showBanner.value = true;
   },
-  hideConsentBanner: () => {
+  hideConsentBanner() {
     showBanner.value = false;
   },
-  resetConsent: () => {
+  async checkAndShowBanner() {
+    const hasConsent = localStorage.getItem('cookie-consent');
+    
+    if (!hasConsent) {
+      const consentRequired = await checkIfConsentRequired();
+      
+      if (consentRequired) {
+        // Show banner after a short delay
+        setTimeout(() => {
+          showBanner.value = true;
+        }, 1000);
+      } else {
+        // For users in non-regulated regions, set default consent
+        saveConsent({
+          essential: true,
+          analytics: true,
+          functional: true
+        });
+      }
+    }
+    
+    return !!hasConsent;
+  },
+  resetConsent() {
     localStorage.removeItem('cookie-consent');
-    showBanner.value = true;
     cookiePreferences.value = {
       essential: true,
       analytics: false,
       functional: false
     };
+    showBanner.value = true;
   }
 });
 </script>

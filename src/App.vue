@@ -30,20 +30,14 @@ const isDarkMode = ref(false)
 const consentBannerRef = ref(null)
 
 // Initialize theme based on user preference
-onMounted(() => {
+onMounted(async () => {
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
   isDarkMode.value = prefersDark
   document.documentElement.classList.toggle('dark', isDarkMode.value)
   
-  // Check if user has already provided consent
-  const hasConsent = localStorage.getItem('cookie-consent')
-  if (!hasConsent) {
-    // Show consent banner if no consent is found
-    setTimeout(() => {
-      if (consentBannerRef.value) {
-        consentBannerRef.value.showConsentBanner()
-      }
-    }, 1000) // Show after 1 second delay
+  // Initialize consent banner with geolocation check
+  if (consentBannerRef.value) {
+    await consentBannerRef.value.checkAndShowBanner()
   }
 })
 
@@ -60,9 +54,9 @@ const toggleTheme = () => {
       <!-- Header with theme toggle -->
       <header class="flex justify-between items-center mb-6">
         <h1 class="text-lg">
-          <div class="flex items-center">
+          <a href="/" class="flex items-center">
             <img src="./assets/logo.png" alt="Logo" class="w-8 h-8 mr-2 filter dark:invert-0 invert grayscale dark:grayscale-0"> Compress <span class="text-green-600 dark:text-green-400">Pictures.com</span>
-          </div>
+          </a>
         </h1>
         <ThemeToggle :is-dark="isDarkMode" @toggle="toggleTheme" />
       </header>
