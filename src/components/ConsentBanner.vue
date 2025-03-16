@@ -221,7 +221,7 @@ const applyGoogleConsentMode = (preferences) => {
       'functionality_storage': preferences.functional ? 'granted' : 'denied',
       'ad_storage': 'denied', // We don't use ad cookies, so always deny
       'ad_user_data': 'denied',
-      'ad_personalization': 'denied',
+      'ad_personalization': preferences.analytics ? 'granted' : 'denied',
       'security_storage': 'granted' // Security cookies are always allowed
     });
   }
