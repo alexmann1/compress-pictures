@@ -203,11 +203,17 @@ const initializeGoogleConsentMode = () => {
   
   // Set default consent to 'denied' for regulated regions
   gtag('consent', 'default', {
-    'ad_storage': 'denied',
+    // Behavioral analytics consent signals
     'analytics_storage': 'denied',
+    'functionality_storage': 'denied',
+    
+    // Advertising consent signals
+    'ad_storage': 'denied',
     'ad_user_data': 'denied',
     'ad_personalization': 'denied',
-    'functionality_storage': 'denied',
+    'ad_measurement': 'denied', // Add this for ad measurement
+    
+    // Required for both categories
     'security_storage': 'granted', // Security cookies are always allowed
     'wait_for_update': 500 // Wait for consent banner interaction
   });
@@ -217,12 +223,20 @@ const initializeGoogleConsentMode = () => {
 const applyGoogleConsentMode = (preferences) => {
   if (window.gtag) {
     window.gtag('consent', 'update', {
+      // Behavioral analytics consent signals
       'analytics_storage': preferences.analytics ? 'granted' : 'denied',
       'functionality_storage': preferences.functional ? 'granted' : 'denied',
-      'ad_storage': 'denied', // We don't use ad cookies, so always deny
-      'ad_user_data': 'denied',
+      
+      // Advertising consent signals
+      'ad_storage': preferences.analytics ? 'granted' : 'denied', 
+      'ad_user_data': preferences.analytics ? 'granted' : 'denied',  
       'ad_personalization': preferences.analytics ? 'granted' : 'denied',
-      'security_storage': 'granted' // Security cookies are always allowed
+      
+      // Required for both categories
+      'security_storage': 'granted', // Security cookies are always allowed
+      
+      // Explicit ads measurement signal required by Google
+      'ad_measurement': preferences.analytics ? 'granted' : 'denied' 
     });
   }
 };
