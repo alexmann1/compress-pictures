@@ -3,7 +3,7 @@
         <div class="max-w-7xl mx-auto px-4 md:px-6">
           <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
             <!-- Logo and tagline -->
-            <div class="md:col-span-1">
+            <div class="md:col-span-1 pl-8">
               <h3 class="text-md font-bold text-gray-800 dark:text-gray-200 mb-3">
                 <div class="flex items-center text-sm">
                   <img src="../assets/logo.png" alt="Logo" class="w-6 h-6 mr-2 dark:invert-0 invert grayscale"> Compress <span class="text-gray-600 dark:text-slate-400">Pictures.com</span>
@@ -31,6 +31,7 @@
               <h4 class="text-sm font-semibold uppercase text-gray-600 dark:text-gray-300 mb-4">Resources</h4>
               <ul class="space-y-2 text-sm">
                 <li><a href="/#faq" class="text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">FAQ</a></li>
+                <li><router-link to="/about" class="text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">About Us</router-link></li>
                 <li><router-link to="/privacy" class="text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Privacy Policy</router-link></li>
                 <li><router-link to="/terms" class="text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Terms of Service</router-link></li>
               </ul>
@@ -55,7 +56,7 @@
           
           <!-- Copyright -->
           <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-500 dark:text-gray-400">
-            <p>&copy; {{ new Date().getFullYear() }} CompressPictures.com. All rights reserved.</p>
+            <p>&copy; {{ new Date().getFullYear() }} MNCN Labs. All rights reserved.</p>
           </div>
         </div>
       </footer>

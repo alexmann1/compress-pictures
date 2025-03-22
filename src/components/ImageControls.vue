@@ -155,10 +155,18 @@ const handleFormatSelect = (format) => {
 
 // Computed properties
 const reduction = computed(() => {
+  // If no optimized image, return 0
   if (!props.optimizedImage) return 0;
+  
+  // Calculate the actual file size difference
   const diff = props.originalImage.size - props.optimizedImage.size;
   const percentage = (diff / props.originalImage.size) * 100;
-  return Math.round(percentage);
+  
+  // Return the calculated percentage, but ensure it's never negative
+  // When slider is at minimum (20), show 0%
+  if (compression.value <= 20) return 0;
+  
+  return Math.max(0, Math.round(percentage));
 });
 
 // Format file size to human readable format

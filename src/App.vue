@@ -1,4 +1,3 @@
-
 <script setup>
 import { ref, onMounted } from 'vue'
 import ThemeToggle from './components/ThemeToggle.vue'
@@ -28,6 +27,7 @@ useHead({
 // Theme state
 const isDarkMode = ref(false)
 const consentBannerRef = ref(null)
+const isMobileMenuOpen = ref(false)
 
 // Initialize theme based on user preference
 onMounted(async () => {
@@ -58,9 +58,51 @@ const toggleTheme = () => {
             <img src="./assets/logo.png" alt="Logo" class="w-8 h-8 mr-2 filter dark:invert-0 invert grayscale dark:grayscale-0"> Compress <span class="text-green-600 dark:text-green-400">Pictures.com</span>
           </a>
         </h1>
-        <ThemeToggle :is-dark="isDarkMode" @toggle="toggleTheme" />
+        
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center space-x-8">
+          <router-link to="/" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400">
+            Home
+          </router-link>
+          <a href="/#features" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400">
+            Features
+          </a>
+          <a href="/#faq" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400">
+            FAQ
+          </a>
+          <router-link to="/about" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400">
+            About
+          </router-link>
+          <ThemeToggle :is-dark="isDarkMode" @toggle="toggleTheme" />
+        </nav>
+        
+        <!-- Mobile Navigation -->
+        <div class="md:hidden flex items-center">
+          <ThemeToggle :is-dark="isDarkMode" @toggle="toggleTheme" class="mr-2" />
+          <button @click="isMobileMenuOpen = !isMobileMenuOpen" class="text-gray-600 dark:text-gray-300 focus:outline-none">
+            <i class="fas" :class="isMobileMenuOpen ? 'fa-times' : 'fa-bars'"></i>
+          </button>
+        </div>
       </header>
-
+      
+      <!-- Mobile Menu Dropdown -->
+      <div v-if="isMobileMenuOpen" class="md:hidden bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 mb-6 transition-all duration-300 ease-in-out">
+        <nav class="flex flex-col space-y-3">
+          <router-link to="/" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 py-2" @click="isMobileMenuOpen = false">
+            Home
+          </router-link>
+          <a href="/#features" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 py-2" @click="isMobileMenuOpen = false">
+            Features
+          </a>
+          <a href="/#faq" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 py-2" @click="isMobileMenuOpen = false">
+            FAQ
+          </a>
+          <router-link to="/about" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 py-2" @click="isMobileMenuOpen = false">
+            About
+          </router-link>
+        </nav>
+      </div>
+      
       <!-- SEO Metadata -->
       <PageMeta />
       

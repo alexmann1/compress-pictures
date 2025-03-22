@@ -189,54 +189,89 @@ watch(() => props.showComparison, (newVal) => {
     
     <!-- Comparison Mode -->
     <div v-if="showComparison" class="relative w-full h-full flex items-center justify-center">
-      <!-- Original image (background) -->
-      <div class="absolute inset-0 flex items-center justify-center">
-        <div 
-          class="relative overflow-hidden w-full h-full bg-contain bg-center bg-no-repeat" 
-          :style="{ 
-            backgroundImage: originalSrc ? `url(${originalSrc})` : 'none'
-          }"
-        >
-          <!-- Optimized image (foreground with clip) -->
+      <!-- Desktop Slider View (hidden on mobile) -->
+      <div class="slider-view">
+        <!-- Original image (background) -->
+        <div class="absolute inset-0 flex items-center justify-center">
           <div 
-            ref="optimizedImageEl"
-            class="absolute inset-0 bg-contain bg-center bg-no-repeat optimized-image" 
+            class="relative overflow-hidden w-full h-full bg-contain bg-center bg-no-repeat" 
             :style="{ 
-              backgroundImage: optimizedSrc ? `url(${optimizedSrc})` : 'none',
-              clipPath: `inset(0 0 0 ${sliderPosition}%)`,
-              backgroundSize: 'contain'
+              backgroundImage: originalSrc ? `url(${originalSrc})` : 'none'
             }"
+          >
+            <!-- Optimized image (foreground with clip) -->
+            <div 
+              ref="optimizedImageEl"
+              class="absolute inset-0 bg-contain bg-center bg-no-repeat optimized-image" 
+              :style="{ 
+                backgroundImage: optimizedSrc ? `url(${optimizedSrc})` : 'none',
+                clipPath: `inset(0 0 0 ${sliderPosition}%)`,
+                backgroundSize: 'contain'
+              }"
+            ></div>
+          </div>
+        </div>
+        
+        <!-- Divider line -->
+        <div 
+          ref="divider" 
+          class="absolute top-0 bottom-0 w-0.5 bg-white cursor-ew-resize z-10 shadow-lg"
+          style="left: 50%;"
+          @mousedown="handleMouseDown"
+          @touchstart="handleTouchStart"
+        >
+          <!-- Divider handle -->
+          <div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white shadow-lg flex items-center justify-center">
+            <i class="fas fa-arrows-alt-h text-blue-600"></i>
+          </div>
+        </div>
+        
+        <!-- Original label (left side) -->
+        <div class="absolute top-4 left-4 bg-black/70 text-white text-sm px-3 py-1.5 rounded-lg whitespace-nowrap font-medium">
+          Original
+        </div>
+        
+        <!-- Optimized label (right side) -->
+        <div class="absolute top-4 right-4 bg-black/70 text-white text-sm px-3 py-1.5 rounded-lg whitespace-nowrap font-medium">
+          Optimized
+        </div>
+        
+        <!-- Aspect ratio indicator -->
+        <div class="absolute bottom-4 left-4 bg-black/70 text-white text-xs px-2 py-1 rounded-md whitespace-nowrap">
+          {{ aspectRatio }}
+        </div>
+      </div>
+      
+      <!-- Mobile Stacked View (hidden on desktop) -->
+      <div class="mobile-view">
+        <!-- Original image (top) -->
+        <div class="mb-4">
+          <div class="bg-black/70 text-white text-sm px-3 py-1.5 rounded-lg whitespace-nowrap font-medium mb-2">
+            Original
+          </div>
+          <div 
+            class="w-full h-48 bg-contain bg-center bg-no-repeat rounded-lg border border-gray-300 dark:border-gray-600" 
+            :style="{ backgroundImage: originalSrc ? `url(${originalSrc})` : 'none' }"
           ></div>
         </div>
-      </div>
-      
-      <!-- Divider line -->
-      <div 
-        ref="divider" 
-        class="absolute top-0 bottom-0 w-0.5 bg-white cursor-ew-resize z-10 shadow-lg"
-        style="left: 50%;"
-        @mousedown="handleMouseDown"
-        @touchstart="handleTouchStart"
-      >
-        <!-- Divider handle -->
-        <div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white shadow-lg flex items-center justify-center">
-          <i class="fas fa-arrows-alt-h text-blue-600"></i>
+        
+        <!-- Optimized image (bottom) -->
+        <div>
+          <div class="bg-black/70 text-white text-sm px-3 py-1.5 rounded-lg whitespace-nowrap font-medium mb-2">
+            Optimized
+          </div>
+          <div 
+            class="w-full h-48 bg-contain bg-center bg-no-repeat rounded-lg border border-gray-300 dark:border-gray-600" 
+            :style="{ backgroundImage: optimizedSrc ? `url(${optimizedSrc})` : 'none' }"
+          ></div>
         </div>
-      </div>
-      
-      <!-- Original label (left side) -->
-      <div class="absolute top-4 left-4 bg-black/70 text-white text-sm px-3 py-1.5 rounded-lg whitespace-nowrap font-medium">
-        Original
-      </div>
-      
-      <!-- Optimized label (right side) -->
-      <div class="absolute top-4 right-4 bg-black/70 text-white text-sm px-3 py-1.5 rounded-lg whitespace-nowrap font-medium">
-        Optimized
-      </div>
-      
-      <!-- Aspect ratio indicator -->
-      <div class="absolute bottom-4 left-4 bg-black/70 text-white text-xs px-2 py-1 rounded-md whitespace-nowrap">
-        {{ aspectRatio }}
+        
+        <!-- Aspect ratio indicator -->
+        <div class="mt-2">
+          <div class="bg-black/70 text-white text-xs px-2 py-1 rounded-md whitespace-nowrap inline-block">
+            {{ aspectRatio }}
+          </div>
+        </div>
       </div>
     </div>
     
@@ -263,3 +298,30 @@ watch(() => props.showComparison, (newVal) => {
     </div>
   </div>
 </template>
+
+<style scoped>
+/* Desktop view (default) */
+.slider-view {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Mobile view (hidden by default) */
+.mobile-view {
+  display: none;
+  width: 100%;
+  padding: 1rem;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+  .slider-view {
+    display: none;
+  }
+  
+  .mobile-view {
+    display: block;
+  }
+}
+</style>

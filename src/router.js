@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from './pages/Home.vue'
 import PrivacyPolicy from './pages/PrivacyPolicy.vue'
 import TermsOfService from './pages/TermsOfService.vue'
+import About from './pages/About.vue'
 
 export const routes = [
   {
@@ -66,15 +67,52 @@ export const routes = [
       ogUrl: 'https://compresspictures.com/features',
       ogImage: 'https://compresspictures.com/logo.png'
     }
-  }  
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: About,
+    meta: {
+      title: 'About Us - CompressPictures.com',
+      description: 'Learn about the team behind CompressPictures.com and our mission to provide free, privacy-focused image optimization tools.',
+      keywords: 'about us, image optimization team, company information, contact us, free image tools',
+      author: 'CompressPictures.com',
+      ogUrl: 'https://compresspictures.com/about',
+      ogImage: 'https://compresspictures.com/logo.png'
+    }
+  }
 ]
 
 export function createRouterInstance() {
   return createRouter({
     history: createWebHistory(),
     routes,
-    scrollBehavior() {
-      return { top: 0 }
+    scrollBehavior(to, from, savedPosition) {
+      // For browser back/forward navigation
+      if (savedPosition) {
+        return savedPosition;
+      }
+      
+      // For hash navigation (anchors)
+      if (to.hash) {
+        return {
+          el: to.hash,
+          behavior: 'smooth',
+          top: 70, // Add some offset for the header
+        };
+      }
+      
+      // If it's a different page (not just a query param change)
+      if (from.path !== to.path) {
+        return { 
+          left: 0,
+          top: 0,
+          behavior: 'auto' // Using 'auto' instead of 'smooth' for page transitions
+        };
+      }
+      
+      // Default scroll position
+      return { top: 0 };
     }
   })
 }

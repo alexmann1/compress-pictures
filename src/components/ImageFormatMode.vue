@@ -1,38 +1,34 @@
 <template>
-  <div class="h-full">
-    <div class="p-4 bg-slate-200 dark:bg-gray-800 h-full flex flex-col">
-
-      <!-- Formatted image container with fixed dimensions -->
-      <div class="flex-grow flex flex-col">
-        <div class="relative mx-auto flex items-center justify-center w-full max-h-[650px]">
+  <div class="format-mode h-full">
+    <div class="relative w-full h-full overflow-hidden rounded-lg bg-slate-200 dark:bg-gray-700 min-h-[650px]">
+      <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div 
+          class="relative border-4 border-green-500 overflow-hidden flex items-center justify-center bg-black"
+          :style="{
+            aspectRatio: localState.ratio.replace(':', '/'),
+            maxWidth: getContainerWidth,
+            maxHeight: '90%',
+            width: getContainerWidth
+          }">
           <div 
-            class="relative border-4 border-green-500 overflow-hidden flex items-center justify-center bg-black"
-            :style="{
-              aspectRatio: localState.ratio.replace(':', '/'),
-              maxWidth: '100%',
-              maxHeight: '100%'
-            }">
-            <div 
-              class="w-full h-full cursor-move relative"
-              @mousedown="startDrag"
-              @touchstart="startDrag"
-            >
-              <img 
-                v-if="originalImage && originalImage.url"
-                :src="originalImage.url" 
-                alt="Formatted image" 
-                class="w-full h-full object-cover"
-                ref="imageRef"
-                :style="{
-                  objectPosition: `calc(50% + ${position.x}px) calc(50% + ${position.y}px)`
-                }"
-                @load="updateImageDimensions"
-              />
-              <div class="absolute top-0 left-0 w-full h-full flex items-end justify-center pointer-events-none">
-                <div class="text-white text-sm bg-black bg-opacity-50 px-2 py-1 rounded">
-                  
-                  Drag to position
-                </div>
+            class="w-full h-full cursor-move relative"
+            @mousedown="startDrag"
+            @touchstart="startDrag"
+          >
+            <img 
+              v-if="originalImage && originalImage.url"
+              :src="originalImage.url" 
+              alt="Formatted image" 
+              class="w-full h-full object-cover"
+              ref="imageRef"
+              :style="{
+                objectPosition: `calc(50% + ${position.x}px) calc(50% + ${position.y}px)`
+              }"
+              @load="updateImageDimensions"
+            />
+            <div class="absolute bottom-4 left-0 w-full flex items-end justify-center pointer-events-none">
+              <div class="text-white text-sm bg-black/70 px-3 py-1.5 rounded-lg">
+                Drag to position
               </div>
             </div>
           </div>
@@ -114,6 +110,25 @@ const formatOptions = {
 // Computed property to filter ratios based on selected platform
 const filteredRatios = computed(() => {
   return formatOptions[localState.platform] || [];
+});
+
+// Computed property to handle aspect ratios correctly
+const getContainerWidth = computed(() => {
+  // Parse the aspect ratio
+  const [width, height] = localState.ratio.split(':').map(Number);
+  
+  // For wider ratios (landscape), use a percentage of the container width
+  if (width > height) {
+    return '90%'; // Use most of the container width for landscape
+  } 
+  // For taller ratios (portrait), calculate width based on height constraint
+  else if (width < height) {
+    return 'auto'; // Let the aspect ratio and max-height determine the width
+  }
+  // For square ratios
+  else {
+    return '70%'; // Use a moderate width for square formats
+  }
 });
 
 // Initialize component

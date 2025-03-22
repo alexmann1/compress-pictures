@@ -3,12 +3,12 @@
   <div class="min-h-screen transition-colors duration-300" :class="isDarkMode ? 'dark' : 'light'">
     <div class="w-full px-4 md:px-6">
       <!-- Header with theme toggle and back button -->
-      <header class="mb-6">
+      <header class="mb-6"><!--
         <div class="text-right">
           <router-link to="/" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 mr-4">
             <i class="fas fa-arrow-left mr-2"></i> Back to Home
           </router-link>
-        </div>
+        </div>-->
       </header>
 
       <!-- Main content -->
@@ -136,6 +136,13 @@ const isDarkMode = ref(false)
 onMounted(() => {
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
   isDarkMode.value = prefersDark
+  
+  // Scroll to top when component is mounted
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: 'auto'
+  })
 })
 
 // Toggle theme

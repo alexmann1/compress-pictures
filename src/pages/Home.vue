@@ -3,7 +3,7 @@
   <div>
     <main class="rounded-lg shadow-lg p-4 md:p-8 bg-slate-100 dark:bg-gray-800 transition-colors duration-300 w-full mx-auto" style="min-height: 700px;">
       <h1 class="text-2xl font-bold mb-1 text-center">Free Image Optimizer</h1>
-      <p class="text-gray-600 dark:text-gray-400 text-center mb-12 w-1/2 mx-auto">Instantly reduce your image file size, effortlessly adapt them for any social media platform, and quickly convert between image formats.</p>
+      <p class="text-gray-600 dark:text-gray-400 text-center mb-12 mx-auto">Instantly reduce your image file size, effortlessly adapt them for any social media platform, and quickly convert between image formats.</p>
 
       <!-- Image upload area -->
       <ImageUploader 
