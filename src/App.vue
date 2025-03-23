@@ -67,6 +67,12 @@ const toggleTheme = () => {
           <a href="/#features" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400">
             Features
           </a>
+          <a href="/#compression" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400">
+            Compression
+          </a>
+          <a href="/#formats" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400">
+            Formats
+          </a>
           <a href="/#faq" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400">
             FAQ
           </a>
@@ -93,6 +99,12 @@ const toggleTheme = () => {
           </router-link>
           <a href="/#features" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 py-2" @click="isMobileMenuOpen = false">
             Features
+          </a>
+          <a href="/#compression" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 py-2" @click="isMobileMenuOpen = false">
+            Compression
+          </a>
+          <a href="/#formats" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 py-2" @click="isMobileMenuOpen = false">
+            Formats
           </a>
           <a href="/#faq" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 py-2" @click="isMobileMenuOpen = false">
             FAQ

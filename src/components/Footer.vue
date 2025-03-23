@@ -18,11 +18,11 @@
             
             <!-- Quick links -->
             <div class="md:col-span-1">
-              <h4 class="text-sm font-semibold uppercase text-gray-600 dark:text-gray-300 mb-4">Features</h4>
+              <h4 class="text-sm font-semibold uppercase text-gray-600 dark:text-gray-300 mb-4">Guides</h4>
               <ul class="space-y-2 text-sm">
-                <li><a href="/#features" class="text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Image Compression</a></li>
-                <li><a href="/#features" class="text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Format & Resize</a></li>
-                <li><a href="/#features" class="text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Format Conversion</a></li>
+                <li><a href="/#compression" class="text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Image Compression</a></li>
+                <li><a href="/#formats" class="text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Format & Resize</a></li>
+                <li><a href="/#faq" class="text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">FAQ</a></li>
               </ul>
             </div>
             
@@ -30,7 +30,6 @@
             <div class="md:col-span-1">
               <h4 class="text-sm font-semibold uppercase text-gray-600 dark:text-gray-300 mb-4">Resources</h4>
               <ul class="space-y-2 text-sm">
-                <li><a href="/#faq" class="text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">FAQ</a></li>
                 <li><router-link to="/about" class="text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">About Us</router-link></li>
                 <li><router-link to="/privacy" class="text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Privacy Policy</router-link></li>
                 <li><router-link to="/terms" class="text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors">Terms of Service</router-link></li>
