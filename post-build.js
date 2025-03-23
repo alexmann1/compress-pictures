@@ -48,6 +48,27 @@ const pagesMetadata = {
     keywords: 'image optimizer features, compress pictures features, image compression options, free image tools',
     canonical: 'https://compresspictures.com/features',
     ogImage: 'https://compresspictures.com/logo.png'
+  },
+  'about.html': {
+    title: 'About Us - CompressPictures.com',
+    description: 'Learn about the team behind CompressPictures.com and our mission to provide free, privacy-focused image optimization tools.',
+    keywords: 'about us, image optimization team, company information, contact us, free image tools',
+    canonical: 'https://compresspictures.com/about',
+    ogImage: 'https://compresspictures.com/logo.png'
+  },
+  'compression.html': {
+    title: 'Image Compression - CompressPictures.com',
+    description: 'Understanding Image Compression',
+    keywords: 'image compression, image optimizer, image compression tool, image compression service',
+    canonical: 'https://compresspictures.com/compression',
+    ogImage: 'https://compresspictures.com/logo.png'
+  },
+  'formats.html': {
+    title: 'Image Formats - CompressPictures.com',
+    description: 'Understanding Image Formats',
+    keywords: 'image formats, image optimizer, image formats tool, image formats service',
+    canonical: 'https://compresspictures.com/formats',
+    ogImage: 'https://compresspictures.com/logo.png'
   }
 };
 

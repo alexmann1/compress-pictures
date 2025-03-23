@@ -52,7 +52,7 @@ export const routes = [
       description: 'Frequently Asked Questions about our image optimization services.',
       keywords: 'image optimizer faq, compress pictures help, image compression questions, frequently asked questions',
       author: 'CompressPictures.com',
-      ogUrl: 'https://compresspictures.com/faq',
+      ogUrl: 'https://compresspictures.com/#faq',
       ogImage: 'https://compresspictures.com/logo.png'
     }
   },
@@ -64,10 +64,34 @@ export const routes = [
       description: 'Explore the features of our free image optimization service.',
       keywords: 'image optimizer features, compress pictures features, image compression options, free image tools',
       author: 'CompressPictures.com',
-      ogUrl: 'https://compresspictures.com/features',
+      ogUrl: 'https://compresspictures.com/#features',
       ogImage: 'https://compresspictures.com/logo.png'
     }
   },
+  {
+    path: '/compression',
+    redirect: '/#compression',
+    meta: {
+      title: 'Compression - CompressPictures.com',
+      description: 'Understanding Image Compression',
+      keywords: 'image optimizer compression, compress pictures compression, image compression options, free image tools',
+      author: 'CompressPictures.com',
+      ogUrl: 'https://compresspictures.com/#compression',
+      ogImage: 'https://compresspictures.com/logo.png'
+    }
+  },  
+  {
+    path: '/formats',
+    redirect: '/#formats',
+    meta: {
+      title: 'Formats - CompressPictures.com',
+      description: 'Understanding different image formats and when to use them',
+      keywords: 'image optimizer formats, compress pictures formats, image formats options, free image tools',
+      author: 'CompressPictures.com',
+      ogUrl: 'https://compresspictures.com/#formats',
+      ogImage: 'https://compresspictures.com/logo.png'
+    }
+  },    
   {
     path: '/about',
     name: 'About',
