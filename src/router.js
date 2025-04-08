@@ -11,7 +11,7 @@ export const routes = [
     component: Home,
     meta: {
       title: 'Free Online Image Resizer/Compression - High-Quality & Fast',
-      description: 'Instantly reduce your image file size, effortlessly adapt them for any social media platform, and quickly convert between image formats.',
+      description: 'Optimize your images for social media with fast compression and format conversion.',
       keywords: 'image optimizer, image compression, image converter, compress jpeg, compress png, compress webp, compress gif, compress svg, free image tool, online image compression',
       author: 'CompressPictures.com',
       ogUrl: 'https://compresspictures.com',

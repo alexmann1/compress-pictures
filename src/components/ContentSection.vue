@@ -67,7 +67,7 @@
               </div>
               <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-100">Complete Privacy</h3>
               <p class="text-gray-600 dark:text-gray-300">
-                Your images stay on your device. Our client-side processing means your files never reach our servers—ensuring total confidentiality.
+                Enjoy peace of mind with client-side processing that keeps your images secure on your device.
               </p>
             </div>
             
@@ -141,7 +141,7 @@
       <section class="py-16 px-4 md:px-8 bg-white dark:bg-gray-800 transition-colors duration-300" id="compression">
         <div class="max-w-4xl mx-auto">
           <h2 class="text-3xl font-bold text-center mb-2 text-gray-800 dark:text-gray-100">Understanding Image Compression</h2>
-          <p class="text-center text-gray-600 dark:text-gray-300 mb-10 max-w-2xl mx-auto">Reduce file size while maintaining visual quality</p>
+          <p class="text-center text-gray-600 dark:text-gray-300 mb-10 max-w-2xl mx-auto">Enhance website performance with faster loading and reduced bandwidth.</p>
           
           <div class="prose dark:prose-invert prose-lg max-w-none">
             <h3 class="text-2xl font-semibold mb-4">What is Image Compression?</h3>
@@ -425,6 +425,17 @@
           <h2 class="text-3xl font-bold text-center mb-10 text-gray-800 dark:text-gray-100">Frequently Asked Questions</h2>
           
           <div class="space-y-6">
+            <!-- FAQ Item 1 -->
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 transition-colors duration-300">
+              <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-100">
+                <i class="fas fa-question-circle text-blue-500 dark:text-blue-400 mr-2"></i>
+                How does compression benefit my site?
+              </h3>
+              <p class="text-gray-600 dark:text-gray-300">
+                It speeds up loading and reduces bandwidth needs.
+              </p>
+            </div>            
+
             <!-- FAQ Item 1 -->
             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 transition-colors duration-300">
               <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-100">
