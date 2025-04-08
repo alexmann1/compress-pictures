@@ -10,7 +10,7 @@ export const routes = [
     name: 'Home',
     component: Home,
     meta: {
-      title: 'Free Online Image Resizer/Compression - High-Quality & Fast',
+      title: 'CompressPictures.com - Free Online Image Resizer/Compression',
       description: 'Optimize your images for social media with fast compression and format conversion.',
       keywords: 'image optimizer, image compression, image converter, compress jpeg, compress png, compress webp, compress gif, compress svg, free image tool, online image compression',
       author: 'CompressPictures.com',
