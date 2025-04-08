@@ -205,7 +205,7 @@
               The key to effective image compression is finding the optimal balance between file size and image quality. Higher compression rates can significantly reduce file size but may introduce visible artifacts or loss of detail. Our image optimizer provides interactive controls that let you adjust compression levels while seeing the results in real-time, enabling you to find the perfect balance for your specific needs.
             </p>
             
-            <div class="bg-blue-50 dark:bg-blue-900/30 p-6 rounded-lg mt-6">
+            <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg mt-6">
               <h4 class="text-xl font-semibold mb-3">Benefits of Image Compression</h4>
               <ul class="list-disc pl-6 space-y-2">
                 <li>Faster website loading speeds</li>
@@ -401,7 +401,7 @@
               </div>
             </div>
             
-            <div class="bg-blue-50 dark:bg-blue-900/30 p-6 rounded-lg mt-8">
+            <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg mt-8">
               <h3 class="text-xl font-semibold mb-3">Choosing the Right Format</h3>
               <p class="mb-4">
                 When deciding which format to use, consider these factors:

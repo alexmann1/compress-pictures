@@ -9,18 +9,18 @@ import { useHead } from '@vueuse/head'
 useHead({
   title: 'Free Online Image Resizer/Compression - High-Quality & Fast',
   meta: [
-    { name: 'description', content: 'A free web app to optimize and compress your images' },
+    { name: 'description', content: 'Effortlessly compress and convert images for any platform with high quality.' },
     { name: 'keywords', content: 'image optimizer, image compression, image converter, compress jpeg, compress png, compress webp' },
     { name: 'author', content: 'CompressPictures.com' },
     // Open Graph tags
     { property: 'og:title', content: 'Free Online Image Resizer/Compression - High-Quality & Fast' },
-    { property: 'og:description', content: 'A free web app to optimize and compress your images' },
+    { property: 'og:description', content: 'Effortlessly compress and convert images for any platform with high quality.' },
     { property: 'og:type', content: 'website' },
     { property: 'og:url', content: 'https://compresspictures.com' },
     // Twitter Card tags
     { name: 'twitter:card', content: 'summary' },
     { name: 'twitter:title', content: 'Free Online Image Resizer/Compression - High-Quality & Fast' },
-    { name: 'twitter:description', content: 'A free web app to optimize and compress your images' }
+    { name: 'twitter:description', content: 'Effortlessly compress and convert images for any platform with high quality.' }
   ]
 })
 
