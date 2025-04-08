@@ -153,7 +153,7 @@
               <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
                 <h4 class="text-xl font-semibold mb-3">Lossless Compression</h4>
                 <p class="mb-3">
-                  Lossless compression reduces file size without degrading image quality. It works by identifying and eliminating statistical redundancy, allowing the original image to be perfectly reconstructed.
+                  Lossless Compression maintains original quality while reducing file size. Lossy Compression achieves smaller sizes by selectively discarding data, potentially affecting quality
                 </p>
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                   <strong>Best for:</strong> Graphics, text, illustrations, or images where every pixel detail matters.
@@ -465,7 +465,7 @@
                 Are my images safe and private?
               </h3>
               <p class="text-gray-600 dark:text-gray-300">
-                Absolutely. Your privacy is our top priority. All processing happens directly in your browser—your images never leave your device or get uploaded to any server. We have no access to your images and no data is stored or transmitted. This makes our tool completely safe for processing sensitive or confidential images.
+                Yes, they remain on your device thanks to our secure client-side processing.
               </p>
             </div>
             
